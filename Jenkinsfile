@@ -1,23 +1,25 @@
 pipeline {
     agent any
     tools {
-       maven 'Maven'
-       jdk "17.0.9"
+        maven 'Maven'
+        jdk "17.0.9"
     }
     environment {
-           NEXUS_USERNAME = 'admin'
-           NEXUS_PASSWORD = 'admin'
-        registryServer='192.168.1.34:5000'
+        NEXUS_USERNAME = 'admin'
+        NEXUS_PASSWORD = 'admin'
+        registryServer = '192.168.1.34:5000'
         imageName = readMavenPom().getArtifactId()
         imageVersion = readMavenPom().getVersion()
-        imageTag="cibertec/pipv1/${imageName}:${imageVersion}"
+        imageTag = "cibertec/pipv1/${imageName}:${imageVersion}"
+        dockerhub_PSW = credentials('nexus-docker-registry').password
+        dockerhub_USR = credentials('nexus-docker-registry').username
     }
     options {
-          copyArtifactPermission '*' //Here you can specify the job name also
-        //  buildDiscarder(logRotator(numToKeepStr: '3'))
-        }
+        copyArtifactPermission '*' // Aquí puedes especificar el nombre del trabajo también
+        // buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
     stages {
-        stage ('Initialize') {
+        stage('Initialize') {
             steps {
                 sh '''
                     echo "PATH = ${PATH}"
@@ -39,7 +41,7 @@ pipeline {
                 }
             }
         }
-        stage('Pushing to Image Registry'){
+        stage('Pushing to Image Registry') {
             steps {
                 sh 'docker tag $imageTag $registryServer/$imageTag'
                 sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin $registryServer'

@@ -10,14 +10,15 @@ pipeline {
         registryServer = '192.168.1.34:5000'
         imageName = readMavenPom().getArtifactId()
         imageVersion = readMavenPom().getVersion()
-        imageTag = "cibertec/pipv1/${imageName}:${imageVersion}"
+        imageTag = 'cibertec/pipv1/${imageName}:${imageVersion}''
         dockerhub_PSW = credentials('nexus-docker-registry').password
         dockerhub_USR = credentials('nexus-docker-registry').username
+
     }
-    options {
+    // options {
         // copyArtifactPermission '*' // Esta opción no es necesaria
         // buildDiscarder(logRotator(numToKeepStr: '3'))
-    }
+    // }
     stages {
         stage('Initialize') {
             steps {

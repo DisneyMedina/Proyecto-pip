@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	<title>Editar Prestamista</title>
+</head>
+
+<body id="page-top">
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				<div class="container-fluid">
+					<div class="row">
+        <div
+                class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Editar Prestamista</h1>
+            <div class="card-body">
+                <form id="id_form"  th:action="@{/prestamistas/editar/{id}(id=${prestamista.id})}" th:object="${prestamista}" method="POST" >
+					<div class="row">
+					<input type="hidden" id="id_id" name="id" th:field="*{id}" th:value="${prestamista.id}" />
+                    <div class="form-group col-md-4">
+                        <label>Nombre: </label>
+                        <input type="text" name="nombres" th:field="*{nombres}" class="form-control"
+                               placeholder="Introduzca su nombre: " required></input>
+					</div>
+					<div class="form-group col-md-4">
+                        <label>Apellido Paterno: </label>
+                        <input type="text" name="paterno" th:field="*{paterno}" class="form-control"
+                               placeholder="Introduzca su email: " required></input>
+					</div>
+					<div class="form-group col-md-4">
+
+                        <label>Apellido Materno: </label>
+                        <input type="text" name="materno" th:field="*{materno}" class="form-control"
+                               placeholder="Introduzca su email: " required></input>
+
+                    </div>
+					<div class="form-group col-md-4">
+                        <label>Fecha de nacimento: </label>
+                        <input type="date" name="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control"
+                               required></input>
+
+					</div>
+					<div class="form-group col-md-4">
+                        <label>Contraseña: </label>
+                        <input type="password" name="password" id="id_password" th:value="*{password}" class="form-control"
+                               placeholder="Introduzca su contraseña: " required></input>
+					</div>
+					<div class="form-group col-md-4">
+                        <label>Email : </label>
+                        <input type="email" name="email" th:field="*{email}" class="form-control"
+                               placeholder="Introduzca su apellido: " required></input>
+					</div>
+					<div class="form-group col-md-4">
+                        <label>DNI : </label>
+                        <input type="number" name="numeroDocumento" th:field="*{numeroDocumento}" class="form-control"
+                               placeholder="Introduzca su apellido: " required></input>
+					</div>
+					<div class="form-group col-md-4">
+                        <label>telefono : </label>
+                        <input type="text" name="telefono" th:field="*{telefono}" class="form-control"
+                               placeholder="Introduzca su telefono: " required></input>
+					</div>
+					</div>
+                        <br>
+                       <div class="text-center">
+                        <!-- <button type="submit" class="btn btn-success">Guardar</button> -->
+                        <button id="id_actualizar" type="button" class="btn btn-primary" >Actualizar</button>
+                        <a href="/prestamistas" class="btn btn-danger ml-2">Cancelar</a>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+
+<script>
+	$("#id_actualizar").click(function (){ 
+	var validator = $('#id_form').data('bootstrapValidator');
+    validator.validate();
+    
+	if (validator.isValid()){
+		// Obtén el id de la URL actual
+        var urlActual = window.location.href;
+        var partesURL = urlActual.split("/");
+        var id = partesURL[partesURL.length - 1];
+        // Crea un objeto que contiene el id como parámetro
+        var dataToSend = {
+            id: id
+        };
+        console.log("El valor de id es: " + id);
+		$.ajax({
+    		type: "POST",
+           	url: "/prestamistas/editar/" + id,
+            data: $('#id_form').serialize() + '&' + $.param(dataToSend),
+            success: function(data){
+            	console.log(data);
+            	mostrarMensaje(data.MENSAJE);
+            	validator.resetForm();
+            	//limpiarFormulario();
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	}   
+});
+
+$('#id_form').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+    	nombres: {
+    		selector : '#id_nombres',
+            validators: {
+                notEmpty: {
+                    message: 'El nombre es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El nombre es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+                /*,
+                
+                remote:{
+                	delay: 1000,
+                	url:'buscaLibroPorTitulo',
+                	message : 'El titulo ya existe'
+                }*/
+            }
+        },
+        paterno: {
+    		selector : '#id_paterno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido paterno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido paterno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        materno: {
+    		selector : '#id_materno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido materno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido materno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        fechaNacimiento: {
+    		selector : '#id_fechaNacimiento',
+            validators: {
+                notEmpty: {
+                    message: 'La fecha de nacimiento es un campo obligatorio'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioMayorEdad',
+                	message : 'El usuario debe ser mayor de edad'
+                }
+            }
+        },
+        password: {
+    		selector : '#id_password',
+            validators: {
+            	notEmpty: {
+                    message: 'La contraseña es un campo obligatorio'
+                }
+            }
+            
+        },
+        email: {
+    		selector : '#id_email',
+            validators: {
+            	notEmpty: {
+                    message: 'Email es un campo obligatorio'
+                },
+                regexp: {
+                    regexp: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: 'El correo no tiene el formato correcto'
+                }
+            }
+        },
+        numeroDocumento: {
+    		selector : '#id_numeroDocumento',
+            validators: {
+                notEmpty: {
+                    message: 'El DNI es un campo obligatorio'
+                },
+                
+                regexp: {
+                    regexp: /^[0-9]{8}$/,
+                    message: 'El DNI es de 8 caracteres y solo números'
+                }
+                ,
+                remote:{
+                	delay: 1000,
+                	url:'buscaUsuarioPorDNI',
+                	message : 'El DNI ya existe'
+                }
+            }
+        },
+        telefono:{
+			selector : '#id_telefono',
+            validators: {
+                notEmpty: {
+                    message: 'El teléfono es un campo obligatorio'
+                },
+                
+                regexp: {
+                    regexp: /^[0-9]{9}$/,
+                    message: 'El teléfono contiene 9 caracteres y solo números'
+                }
+                
+            }
+		}
+    }   
+});
+</script>
+</body>
+</html>

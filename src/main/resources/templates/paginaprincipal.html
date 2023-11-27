@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F I N A N C E</title>
+    <link rel="shortcut icon" th:src="@{/images/paginaprincipal/favicon.png}" type="image/x-icon" />
+    <link rel="stylesheet" th:href="@{/css/paginaprincipal/normalize.css}" />
+    <link rel="stylesheet" th:href="@{/css/paginaprincipal/estilos.css}" />
+
+    <meta name="theme-color" content="#2091F9">
+
+    <!-- Metadatos, Open Graph y Twitter Card -->
+
+    <style>
+          .calculator {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        margin: 20px 420px 20px;
+        }
+
+        .form-group {
+        margin-bottom: 10px;
+        }
+
+        label {
+        display: block;
+        font-weight: bold;
+        }
+
+        input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        }
+
+        button {
+        padding: 10px 20px;
+        background-color: #3498db;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        }
+        .tituloP{
+            text-align: center;
+        }
+        button:hover {
+        background-color: #2980b9;
+        }
+
+        .result {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        }
+        .preguntas{
+            padding: 0px 900px 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero">
+        <nav class="nav container">
+            <div class="nav__logo">
+                <h2 class="nav__title">F I N A N C E</h2>
+            </div>
+
+            <ul class="nav__link nav__link--menu">
+                <li class="nav__items">
+                    <a href="#" class="nav__links">Inicio</a>
+                </li>
+                <li class="nav__items">
+                    <a href="#" class="nav__links">Acerca de</a>
+                </li>
+                <li class="nav__items">
+                    <a href="#" class="nav__links">Contacto</a>
+                </li>
+                <li class="nav__items">
+                    <a th:href="@{/login}" class="nav__links">Iniciar Sesion</a>
+                </li>
+
+                <img th:src="@{/images/paginaprincipal/close.svg}" class="nav__close" />
+            </ul>
+
+            <div class="nav__menu">
+                <img th:src="@{/images/paginaprincipal/menu.svg}" class="nav__img" />
+            </div>
+        </nav>
+
+        <section class="hero__container container">
+            <h1 class="hero__title"> Solicita tu préstamo con nosotros y da un paso seguro hacia un futuro próspero.</h1>
+            <p class="hero__paragraph">Nuestra empresa se esfuerza por ofrecer tasas de interés competitivas, lo que significa que nuestros clientes pueden acceder a
+                préstamos a tasas atractivas. Además, también ofrecemos
+                beneficios adicionales, como programas de recompensas o descuentos por lealtad, que pueden hacer que nuestros préstamos sean aún más atractivos.</p>
+            <a href="#" class="cta">Solicitar</a>
+        </section>
+    </header>
+
+    <main>
+       <main>
+        <section class="container about">
+            <h2 class="subtitle">¿Qué beneficios te ofrecemos?</h2>
+            <p class="about__paragraph"> </p>
+
+            <div class="about__main">
+                <article class="about__icons">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3141/3141991.png" class="about__icon">
+                    <h3 class="about__title">Acceso a Financiamiento Rápido y Conveniente: </h3>
+                    <p class="about__paragrah">Una empresa de préstamos bancarios puede ofrecer a sus clientes acceso a financiamiento de manera rápida y conveniente. 
+                        Esto significa que los clientes pueden obtener los fondos que necesitan para sus proyectos personales o empresariales en un plazo razonable.</p>
+                </article>
+
+                <article class="about__icons">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3141/3141991.png" class="about__icon">
+                    <h3 class="about__title">Variedad de Productos y Opciones de Préstamo:</h3>
+                    <p class="about__paragrah">Otra ventaja es la variedad de productos y opciones de préstamo que una empresa de préstamos bancarios puede ofrecer. 
+                        Esto incluye diferentes tipos de préstamos, tasas de interés competitivas y plazos flexibles.</p>
+                </article>
+
+                <article class="about__icons">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3141/3141991.png" class="about__icon">
+                    <h3 class="about__title">Asesoramiento Financiero Profesional:</h3>
+                    <p class="about__paragrah">Muchas empresas de préstamos bancarios también ofrecen asesoramiento financiero profesional a sus clientes. 
+                        Esto puede incluir orientación sobre cómo administrar sus finanzas, mejorar su puntaje crediticio y tomar decisiones financieras informadas. </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="knowledge">
+            <div class="knowledge__container container">
+                <div class="knowledege__texts">
+                    <h2 class="subtitle">Aprende sobre prestamos¡Domina los intereses de una vez por todas!</h2>
+                    <p class="knowledge__paragraph"> Nuestra empresa ha establecido una sólida reputación en el sector financiero. A lo largo de los años, hemos demostrado ser una institución confiable que pone el bienestar financiero de nuestros clientes en primer lugar. Nuestra integridad y ética 
+                        en los negocios son valores fundamentales que nos distinguen. Los clientes pueden confiar en nosotros para brindarles soluciones financieras responsables y transparentes</p>
+                    <a href="#" class="cta">Registrate</a>
+                </div>
+
+                <figure class="knowledge__picture">
+                    <img src="https://img.freepik.com/vector-premium/grafico-financiero-abstracto-diagrama-ganancias-fondo-bancario-banner-vector-inversiones-comerciales_80590-15991.jpg?w=2000" class="knowledge__img">
+                </figure>
+            </div>
+        </section>
+
+        <section class="price container">
+            <h2 class="subtitle">Obten el plan perfecto </h2>
+
+            <div class="price__table">
+                <div class="price__element">
+                    <p class="price__name">Préstamos Personales desde:</p>
+                    <h3 class="price__price">S/ 1000</h3>
+
+                    <div class="price__items">
+                        <p class="price__features">0.015%</p>
+                        <p class="price__features">De</p>
+                        <p class="price__features">Interes</p>
+                    </div>
+
+                    <a href="#" class="price__cta">Lo quiero</a>
+                </div>
+
+
+                <div class="price__element price__element--best">
+                    <p class="price__name">Préstamos para Automóviles desde:</p>
+                    <h3 class="price__price">$50000</h3>
+
+                    <div class="price__items">
+                        <p class="price__features">0.010%</p>
+                        <p class="price__features">De</p>
+                        <p class="price__features">Interes</p>
+                    </div>
+
+                    <a href="#" class="price__cta">Lo quiero</a>
+                </div>
+
+
+                <div class="price__element">
+                    <p class="price__name">Préstamos Hipotecarios desde:</p>
+                    <h3 class="price__price">$20000</h3>
+
+                    <div class="price__items">
+                        <p class="price__features">0.020%</p>
+                        <p class="price__features">De</p>
+                        <p class="price__features">Interes</p>
+                    </div>
+
+                    <a href="#" class="price__cta">Lo quiero</a>
+                </div>
+
+
+            </div>
+        </section>
+
+        <section class="testimony">
+            <div class="testimony__container container">
+                <img src="./images/leftarrow.svg" class="testimony__arrow" id="before">
+
+                <section class="testimony__body testimony__body--show" data-id="1">
+                    <div class="testimony__texts">
+                        <h2 class="subtitle">Mi nombre es Alessandra Ruiz, <span class="testimony__course">Jefa Prestamista Sede Independencia.</span></h2>
+                        <p class="testimony__review">Desde que me uní a esta empresa, he estado constantemente impresionado por el enfoque en la innovación y la tecnología. Trabajar en el 
+                            equipo de Jefes Prestamistas me ha permitido contribuir a tomar decisiones financieras sólidas y responsables. La empresa invierte en capacitación y desarrollo, 
+                            lo que me ha permitido mantenerme actualizado en un sector en constante cambio. Estoy orgulloso de formar parte de un equipo que se preocupa tanto por su impacto 
+                            en la comunidad.</p>
+                    </div>
+
+                    <figure class="testimony__picture">
+                        <img src="./images/face.jpg" class="testimony__img">
+                    </figure>
+                </section>
+                
+                <section class="testimony__body" data-id="2">
+                    <div class="testimony__texts">
+                        <h2 class="subtitle">Mi nombre es Alejandra Perez, <span class="testimony__course">Prestamista Sede Independencia.</span></h2>
+                        <p class="testimony__review">Trabajar en esta empresa ha sido una experiencia enriquecedora. La cultura de trabajo es increíble, y estoy rodeado de un equipo comprometido y 
+                            apasionado. Nuestra misión de ayudar a las personas a alcanzar sus metas financieras es gratificante, y la empresa se preocupa genuinamente por el bienestar de sus empleados. 
+                            Además, la capacitación y el desarrollo profesional son prioridades aquí, lo que me ha permitido crecer en mi carrera de manera significativa."</p>
+                    </div>
+
+                    <figure class="testimony__picture">
+                        <img src="./images/face2.jpg" class="testimony__img">
+                    </figure>
+                </section>
+
+                <section class="testimony__body" data-id="3">
+                    <div class="testimony__texts">
+                        <h2 class="subtitle">Mi nombre es Arturo Arteaga, <span class="testimony__course">Jefe Prestamista Sede Comas.</span></h2>
+                        <p class="testimony__review">Estoy encantado de ser parte de esta empresa de préstamos bancarios. Aquí, realmente se valora la ética y la transparencia en nuestras relaciones 
+                            con los clientes. Cada día tengo la oportunidad de ayudar a las personas a encontrar las mejores soluciones financieras para sus necesidades. La empresa brinda un excelente 
+                            equilibrio entre trabajo y vida personal, y eso es algo que aprecio mucho.</p>
+                    </div>
+
+                    <figure class="testimony__picture">
+                        <img src="./images/face3.jpg" class="testimony__img">
+                    </figure>
+                </section>
+
+                <section class="testimony__body" data-id="4">
+                    <div class="testimony__texts">
+                        <h2 class="subtitle">Mi nombre es Kevin Ramirez, <span class="testimony__course">Prestamista Sede Comas.</span></h2>
+                        <p class="testimony__review">Esta empresa realmente se destaca en el servicio al cliente. La satisfacción de nuestros clientes es primordial, y eso se refleja en cada interacción 
+                            que tenemos. Estoy orgulloso de trabajar para una empresa que se preocupa tanto por su reputación y la satisfacción de sus clientes. Además, el ambiente de trabajo es amigable
+                            y colaborativo, lo que hace que cada día sea una experiencia positiva</p>
+                    </div>
+
+                    <figure class="testimony__picture">
+                        <img src="./images/face4.jpg" class="testimony__img">
+                    </figure>
+                </section>
+
+
+                <img src="./images/rightarrow.svg" class="testimony__arrow" id="next">
+            </div>
+        </section>
+
+        <section class="questions container">
+            <h2 class="subtitle">Preguntas frecuentes</h2>
+            <p class="questions__paragraph">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea, porro
+                doloribus neque perspiciatis sapiente fuga.</p>
+
+            <section class="questions__container">
+                <article class="questions__padding">
+                    <div class="questions__answer">
+                        <h3 class="questions__title">¿Qué es un préstamo personal?
+                            <span class="questions__arrow">
+                                <img src="./images/arrow.svg" class="questions__img">
+                            </span>
+                        </h3>
+
+                        <p class="questions__show">Los créditos personales se refieren al prestamista que cede un monto de dinero al prestatario previo a un acuerdo donde 
+                    se firma y consta la devolución del monto prestado más los 
+                    intereses y los gastos derivados. A diferencia de otros 
+                    préstamos en efectivo (hipotecarios o vehiculares) este dinero puede ser usado para cualquier fin que se le quiera dar.</p>
+                    </div>
+                </article>
+
+                <article class="questions__padding">
+                    <div class="questions__answer">
+                        <h3 class="questions__title">¿Cuál es la mejor tasa de interés para un préstamo personal?
+                            <span class="questions__arrow">
+                                <img src="./images/arrow.svg" class="questions__img">
+                            </span>
+                        </h3>
+
+                        <p class="questions__show">La mejor tasa para un préstamo personal de acuerdo al mercado oscila aproximadamente entre 14 a 50% anual. Esta estimación varía de acuerdo a las políticas de los bancos, 
+                            la situación económica nacional e internacional. 
+                            
+                            Si quieres saber ¿Cuál es el banco que cobra menos intereses en préstamos? realiza una comparación en la parte superior de esta página.
+                    
+                            Para realizar dicha comparación debe ingresar los siguientes datos: tipo de moneda, monto del préstamo, plazo del préstamo (en meses), tu nivel de ingresos mensuales, 
+                            tu ubicación geográfica (departamento) y tu dirección de email. Luego se mostrará una lista con todos los préstamos personales que cumplan tus condiciones y podrás 
+                            elegir el que más te conviene comparando tasas de interés costos e incluso la cuota mensual que tendrás que pagar.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="questions__padding">
+                    <div class="questions__answer">
+                        <h3 class="questions__title">¿Qué empresas ofrecen préstamos online Perú?
+                            <span class="questions__arrow">
+                                <img src="./images/arrow.svg" class="questions__img">
+                            </span>
+                        </h3>
+
+                        <p class="questions__show">Estos créditos en línea se pueden gestionar 100% online y brindan dinero al instante. Para  solicitar préstamo 
+                            online sólo con tu DNI.  
+                            Para saber si tienes un crédito pre aprobado solo dura minutos y son otorgados por algunos bancos, financieras y fintechs.
+                            Entra a nuestro comparador y obtén la información necesaria para que puedas aplicar a un préstamo online desde las plataformas de cada una de la entidades.
+                        </p>
+                    </div>
+                </article>
+            </section>
+
+        <div class="calculator">
+            <h1>Calculadora de Cuotas Mensuales</h1>
+            <div class="form-group" id="box-fecha">
+                <label for="">Tus días de pago son</label>
+                <select th:name="fecha_pago" id="fecha_pago" class="form-control">
+                    <option value="">Elige una opción</option>
+                    <option value="5">Día 05</option>
+                    <option value="10">Día 10</option>
+                    <option value="15">Día 15</option>
+                    <option value="20">Día 20</option>
+                    <option value="25">Día 25</option>
+                    <option value="30">Día 30</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="totalAmount">Total de la compra:</label>
+                <input type="number" th:id="totalAmount" placeholder="Ingrese el monto total" class="combo" />
+            </div>
+            <div class="form-group">
+                <label for="months">Número de cuotas mensuales:</label>
+                <input type="number" th:id="months" placeholder="Ingrese el número de cuotas" />
+            </div>
+            <button onclick="calculateMonthlyPayment()">Calcular Cuota Mensual</button>
+            <div th:text="${result}" class="result"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <section class="footer__container container">
+            <nav class="nav nav--footer">
+                <h2 class="footer__title">F I N A N C E</h2>
+
+                <ul class="nav__link nav__link--footer">
+                    <li class="nav__items">
+                        <a href="#" class="nav__links">Inicio</a>
+                    </li>
+                    <li class="nav__items">
+                        <a href="#" class="nav__links">Acerca de</a>
+                    </li>
+                    <li class="nav__items">
+                        <a href="#" class="nav__links">Contacto</a>
+                    </li>
+                    <li class="nav__items">
+                        <a href="#" class="nav__links"> </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <form class="footer__form" action="https://formspree.io/f/mknkkrkj" method="POST">
+                <h2 class="footer__newsletter">Suscribete a la newsletter</h2>
+                <div class="footer__inputs">
+                    <input type="email" placeholder="Email:" class="footer__input" th:name="_replyto" />
+                    <input type="submit" value="Registrate" class="footer__submit" />
+                </div>
+            </form>
+        </section>
+
+        <section class="footer__copy container">
+            <div class="footer__social">
+                <a href="#" class="footer__icons"><img th:src="@{/images/paginaprincipal/facebook.svg}" class="footer__img" /></a>
+                <a href="#" class="footer__icons"><img th:src="@{/images/paginaprincipal/twitter.svg}" class="footer__img" /></a>
+                <a href="#" class="footer__icons"><img th:src="@{/images/paginaprincipal/youtube.svg}" class="footer__img" /></a>
+            </div>
+
+            <h3 class="footer__copyright">Derechos reservados &copy; </h3>
+        </section>
+    </footer>
+
+    <script src="./js/slider.js"></script>
+    <script src="./js/questions.js"></script>
+    <script src="./js/menu.js"></script>
+
+    <script>
+        // JavaScript personalizado aquí
+    </script>
+</body>
+
+</html>

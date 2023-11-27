@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+<title>Index</title>
+</head>
+<body id="page-top">
+	
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				
+				<div class="container-fluid">
+					<h1 class="display-1">Bienvenido al portal</h1>
+                   
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+</body>
+</html>

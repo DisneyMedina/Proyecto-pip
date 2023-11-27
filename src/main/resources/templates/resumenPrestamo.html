@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	<title>Resumen estado de préstamos</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body id="page-top">
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				
+				<div class="container-fluid">
+					<!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Resumen estado de préstamos</h5>
+                        </div>
+                        <div class="card-body">
+							
+							
+								<form class="form" th:action="@{/resumen}">
+									<div class="row"> 
+										
+										<div class="col-md-3" style="margin: 10px;">
+										    <label for="prestamista" style="text-align: left;">Prestamistas:</label>
+										    <select id="id_prestamista" name="prestamista" class="form-control">
+										        <option value="-1">Seleccionar Prestamistas</option>
+										        <option th:each="prestamista : ${listaPrestamistas}" th:value="${prestamista.id}" th:text="${prestamista.nombres + ' ' + prestamista.paterno}"></option>
+										    </select>
+										</div>
+		
+									</div>
+									<div class="row" style="text-align: center;">
+										<div  class="col-md-12" style="margin: 10px;" >
+									  		<button type="submit" id="id_btn_filtrar" class="btn btn-primary" style="width: 150px">FILTRA</button>
+									  	</div>	
+									</div>	  
+								</form>
+							
+							<hr>
+						
+                                <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+											<th>ID Préstamo</th>
+											<th>Nombre Prestatario</th>
+								            <th>Monto Préstamo</th>
+								            <th>Cuotas Pagadas</th>
+								            <th>Cuotas No Pagadas</th>
+								            <th>Monto Pagado</th>
+								         	<th>Monto No Pagado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+									    <tr th:each="resumen : ${resumenes}">
+									        <td th:text="${resumen.idPrestamo}"></td>
+									        <td th:text="${resumen.nombrePrestatario}"></td>
+									        <td th:text="${resumen.montoPrestamo}"></td>
+									        <td th:text="${resumen.cuotasPagadas}"></td>
+									        <td th:text="${resumen.cuotasNoPagadas}"></td>
+									        <td th:text="${resumen.montocuotasPagadas}"></td>
+									         <td th:text="${resumen.montocuotasNoPagadas}"></td>
+									        
+							   			 </tr>
+									</tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+				<!-- Modal para tipos de pagos -->
+
+				<div class="modal fade" id="myModalPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Realizar Pago</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario para el monto de pago -->
+                <form id="pagoForm" action="/pagar" method="post" >
+					<div class="row">
+                        <div class="col-md-6">
+                            <label for="idCuotaPago">Id Cuota:</label>
+                            <input type="text" class="form-control" id="idCuotaPago" name="idCuotaPago" readonly>
+                        </div>
+                    </div>
+                    <!-- Primera fila -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="idPrestamoPago">Id Préstamo:</label>
+                            <input type="text" class="form-control" id="idPrestamoPago" name="idPrestamoPago" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="numeroCuota">Número de Cuota:</label>
+                            <input type="text" class="form-control" id="numeroCuota" name="numeroCuota" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="nombrePrestatario">Nombre prestatario:</label>
+                            <input type="text" class="form-control" id="nombrePrestatario" name="nombrePrestatario" readonly>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-6">
+                            <label for="montoCuota">Monto faltante:</label>
+                            <input type="text" class="form-control" id="montoCuota" name="montoCuota" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="moraPago">Mora:</label>
+                            <input type="text" class="form-control" id="moraPago" name="moraPago" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Segunda fila -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="fechaVencimiento">Fecha de Vencimiento:</label>
+                            <input type="text" class="form-control" id="fechaVencimiento" name="fechaVencimiento" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="deuda">Deuda:</label>
+                            <input type="text" class="form-control" id="deuda" name="deuda" readonly>
+                        </div>
+                    </div>
+					<div class="row">
+                        <div class="col-md-6">
+                            <label for="montoPago">Monto de Pago:</label>
+                            <input type="text" class="form-control" id="montoPago" name="montoPago">
+                        </div>
+                    </div>
+                    <!-- Botón de Pagar -->
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <button type="button" id="id_pagar" class="btn btn-primary" >Pagar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+<script>
+<!-- Inicialización de la DataTable con idioma español -->
+		
+			
+			
+			var table = $('#dataTable').DataTable({
+    			language: {
+        "decimal": "",
+        "emptyTable": "No hay información",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+        "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+        "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Mostrar _MENU_ Entradas",
+        "loadingRecords": "Cargando...",
+        "processing": "Procesando...",
+        "search": "Buscar:",
+        "zeroRecords": "Sin resultados encontrados",
+        "paginate": {
+            "first": "Primero",
+            "last": "Ultimo",
+            "next": "Siguiente",
+            "previous": "Anterior"
+        }
+    },
+});
+$("#id_btn_filtrar").click(function() {
+    
+    var varFecDesde = $("#id_desde").val();
+    var varFecHasta = $("#id_hasta").val();
+
+    
+    console.log("Valor de desde: " + varFecDesde);
+    console.log("Valor de hasta: " + varFecHasta);
+
+    if (valFechaInicioMayFechaFin("#id_desde", "#id_hasta")) {
+        alert("La fecha hasta es superior a la fecha desde");
+       
+        return;
+    }
+});
+
+$(document).ready(function() {
+    // Capturar el clic en el botón "Pago Total" de cada fila
+    $('button[data-target="#myModalPago"]').click(function() {
+        // Obtener la fila correspondiente a este botón
+        var row = $(this).closest('tr');
+        
+        // Obtener el monto de la columna "Monto" en esa fila
+        var idPrestamo = row.find('td:nth-child(1)').text()
+	    var idCuota = row.find('td:nth-child(2)').text()
+	    var nombrePrestatario = row.find('td:nth-child(3)').text()
+	    var numeroCuota = row.find('td:nth-child(4)').text()
+	    var montoCuota = row.find('td:nth-child(9)').text()
+	    var fechaVencimiento = row.find('td:nth-child(6)').text()
+	    var mora = row.find('td:nth-child(10)').text()
+	    var deuda = row.find('td:nth-child(11)').text()
+        // Llenar el campo "Monto a pagar" en el modal "Pago Total"
+        $('#idPrestamoPago').val(idPrestamo);
+        $('#idCuotaPago').val(idCuota);
+        $('#nombrePrestatario').val(nombrePrestatario);
+        $('#numeroCuota').val(numeroCuota);
+        $('#montoCuota').val(montoCuota);  
+        $('#fechaVencimiento').val(fechaVencimiento);     
+        $('#moraPago').val(mora); 
+        $('#deuda').val(deuda);     
+    });
+});
+$("#id_pagar").click(function (){ 
+	//var validator = $('#id_form').data('bootstrapValidator');
+    //validator.validate();
+    var idCuota = document.getElementById("idCuotaPago").value;
+        var monto = document.getElementById("montoPago").value;
+        var mora = document.getElementById("moraPago").value;
+        var deuda = document.getElementById("deuda").value;
+        var datosPago = {
+        	idCuota: idCuota,
+            monto: monto,
+            mora: mora,
+            deuda: deuda
+            // Otros campos...
+        };
+
+	//if (validator.isValid()){
+		$.ajax({
+    		type: "POST",
+            url: "/pagar", 
+            data: datosPago,
+            success: function(data){
+            	console.log(data);
+            	mostrarMensaje(data.MENSAJE);
+            	//validator.resetForm();
+            	//limpiarFormulario();
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	//}   
+});
+
+
+
+
+
+
+
+
+
+//----------------------BOTON PAGO TOTAL-----------------------------------
+$(document).ready(function() {
+    // Capturar el clic en el botón "Pago Total" de cada fila
+    $('button[data-target="#myModalPagoTotal"]').click(function() {
+        // Obtener la fila correspondiente a este botón
+        var row = $(this).closest('tr');
+        
+        // Obtener el monto de la columna "Monto" en esa fila
+        var monto = row.find('td:nth-child(3)').text(); // Ajusta el número según la posición de la columna
+        var fechaVen = row.find('td:nth-child(4)').text();
+        var cuota = row.find('td:nth-child(1)').text()
+        var prestatario = row.find('td:nth-child(2)').text()
+        
+        // Llenar el campo "Monto a pagar" en el modal "Pago Total"
+        $('#id_monto').val(monto);
+        $('#id_fechaVencimiento').val(fechaVen);
+        $('#id_cuota').val(cuota);
+        $('#id_prestatario').val(prestatario);    
+    });
+});
+//----------------------BOTON PAGO PARCIAL 1-----------------------------------
+$('button[data-target="#myModalPagoparcial1"]').click(function() {
+    var row = $(this).closest('tr');
+
+    // Obtener los valores de la fila
+    var prestatario = row.find('td:nth-child(2)').text(); // Nombre del prestatario
+    var idCuota = row.find('td:nth-child(1)').text(); // ID de la cuota
+    var fechaVencimiento = row.find('td:nth-child(4)').text(); // Fecha de vencimiento
+
+    // Asignar los valores al modal de Pago Parcial 1
+    $('#id_prestatario1').val(prestatario);
+    $('#id_cuota1').val(idCuota);
+    $('#id_fechaVencimiento1').val(fechaVencimiento);
+});
+//----------------------BOTON PAGO PARCIAL 2-----------------------------------
+$('button[data-target="#myModalPagoparcial2"]').click(function() {
+    var row = $(this).closest('tr');
+
+    // Obtener los valores de la fila
+    var prestatario = row.find('td:nth-child(2)').text(); // Nombre del prestatario
+    var idCuota = row.find('td:nth-child(1)').text(); // ID de la cuota
+    var fechaVencimiento = row.find('td:nth-child(4)').text(); // Fecha de vencimiento
+
+    // Asignar los valores al modal de Pago Parcial 2
+    $('#id_prestatario2').val(prestatario);
+    $('#id_cuota2').val(idCuota);
+    $('#id_fechaVencimiento2').val(fechaVencimiento);
+});
+//-----------------------------------------------------------------------------
+$(document).ready(function() {
+    // Función para calcular la mora
+    function calcularMora(fechaPago) {
+        var fechaActual = new Date();
+        var fechaPagoDate = new Date(fechaPago);
+        
+        if (fechaActual > fechaPagoDate) {
+            var diferenciaDias = (fechaActual - fechaPagoDate ) / (1000 * 60 * 60 * 24); // Diferencia en días
+            var moraDiaria = 4; // Valor de la mora por día
+            return diferenciaDias * moraDiaria;
+        } else {
+            return 0; // Si la fecha actual es antes de la fecha de vencimiento, la mora es cero
+        }
+    }
+
+    // Capturar el clic en el botón "Pago Total" de cada fila
+    $('button[data-target="#myModalPagoTotal"]').click(function() {
+        // Obtener la fila correspondiente a este botón
+        var row = $(this).closest('tr');
+        
+        // Obtener el monto de la columna "Monto" en esa fila
+        var monto = parseFloat(row.find('td:nth-child(3)').text()); // Ajusta el número según la posición de la columna
+        var fechaPago = row.find('td:nth-child(4)').text(); // Obtener la fecha de pago de la cuota
+
+        // Calcular la mora
+        var mora = calcularMora(fechaPago);
+
+        // Llenar el campo "Mora" en el modal "Pago Total"
+        $('#id_mora').val(mora.toFixed(2)); // Ajusta el número de decimales según tu preferencia
+
+        // Calcular y llenar el campo "Monto a pagar" en el modal "Pago Total"
+        var montoTotal = monto + mora;
+        $('#id_monto').val(montoTotal.toFixed(2)); // Ajusta el número de decimales según tu preferencia
+
+        // Capturar el clic en el botón "Pagar" del modal
+        $('#myModalPagoTotal button.btn-outline-primary').click(function() {
+            // Aquí puedes realizar acciones adicionales al presionar el botón "Pagar"
+            // Por ejemplo, enviar el monto total para procesamiento o realizar una acción específica.
+            // En este ejemplo, solo se muestra un mensaje con el monto total a pagar.
+            alert('Monto a pagar: ' + montoTotal.toFixed(2));
+        });
+    });
+});
+
+
+
+</script>
+</body>
+</html>

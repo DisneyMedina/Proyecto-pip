@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="plantilla_menu/MenuTemplate :: cabecera">
+    <title>Crear Solicitud de préstamo</title>
+	   
+</head>
+
+<body id="page-top">
+    <!-- Creo un formulario -->
+    <div id="wrapper">
+        <div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+                            <h1 class="text-center">Registro de Solicitud de Préstamo</h1>
+                            <div class="card-body" style="display: flex; justify-content: space-evenly;">
+                                <!-- Columna del formulario -->
+                                <div class="col-lg-7 col-md-4 col-sm-3">
+                                    <form th:action="@{/solicitudes}" th:object="${solicitud}" method="post" id="id_form">
+                                        <div class="form-group">
+                                            <label for="id_monto">Monto:</label>
+                                            <input type="text" id="id_monto" name="monto" th:field="*{monto}"
+                                                   class="form-control"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_fechaInicioPrestamo">Fecha Inicio Préstamo:</label>
+                                            <input type="date" id="id_fechaInicioPrestamo" name="fechaInicioPrestamo"
+                                                   th:field="*{fechaInicioPrestamo}" class="form-control"/>
+                                        </div>
+                                        <div class="form-group">
+										    <label for="id_dias">Días:</label>
+										    <input type="number" id="id_dias" name="dias" class="form-control" />
+										</div>
+                                        <div class="form-group">
+    										<label for="id_fechaFinPrestamo">Fecha Fin Préstamo:</label>
+                                             <input type="date" id="id_fechaFinPrestamo" name="fechaFinPrestamo" class="form-control" readonly />
+                                        </div>
+                                        <div class="form-group row">
+										    <div class="col-lg-8">
+										        <label for="id_detalleBancoUsuario" class="col-form-label">Numero de cuenta CCI:</label>
+										        <select name="detalleBancoUsuario" id="id_detalleBancoUsuario" class="form-control">
+										            <option value=" " selected>[Seleccione cuenta]</option>
+										            <th:block>
+										                <th:block th:each="banco : ${listaDetalleBanco}">
+										                    <option th:value="${banco.id}" th:text="${banco.cuenta}"></option>
+										                </th:block>
+										            </th:block>
+										        </select>
+										    </div>
+										    <div class="col-lg-3" style="display: flex;">
+										        <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#myModalRegistrarTargeta">
+										            Registrar tarjeta
+										        </button>
+										    </div>
+										</div>
+
+
+
+                                         
+                                        <div style="margin-top: 15px;">
+                                            <button id="id_visualizarCuotas" class="btn btn-primary">Visualizar Cuotas
+                                            </button>
+                                            <button id="id_registrar" type="button" class="btn btn-primary">Registrar
+                                            </button>
+                                            <a href="/solicitudes" class="btn btn-danger ml-2">Cancelar</a>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Columna de cuotas y pago por cuota -->
+                                <div class="col-lg-4 col-md-4 col-sm-3" style="background-color: #f8f8ff;">
+                                    <div id="cuotasContainer">
+                                        <!-- Aquí puedes agregar contenido relacionado con las cuotas -->
+                                    </div>
+                                    <div id="montoPorCuotaContainer">
+                                        <!-- Aquí puedes agregar contenido relacionado con el monto por cuota -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crea el contenido del modal -->
+                <div class="modal fade" id="myModalRegistrarTargeta" data-backdrop="static" data-keyboard="false" tabindex="-1">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalLabel">Registre su tarjeta</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" th:action="@{/solicitudes/crear/numeroCuenta}" id="id_form_numeroCuenta">
+                                    <div class="container">
+										<div class="form-group">
+	                                        <label for="id_banco">Banco:</label>
+	                                        <select class="form-control" id="id_banco" name="banco">
+	                                            <option value=" ">[Seleccione banco]</option>
+	                                            <th:block>
+	                                                <th:block th:each="banco : ${listaBanco}">
+	                                                    <option th:value="${banco.id}" th:text="${banco.nombre}"></option>
+	                                                </th:block>
+	                                            </th:block>
+	                                        </select>
+                                        </div>
+                                        <div class="form-group">
+	                                        <label for="id_cuenta">Numero de cuenta CCI:</label>
+	                                        <input type="text" id="id_cuenta" name="cuenta" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button id="id_registrarNumeroCuenta" type="button" class="btn btn-outline-success">Registrar</button>
+                                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+<script type="text/javascript">
+	$.getJSON("listaDetalleBancoUsuario", {}, function(data){
+	$.each(data, function(i,item){
+		$("#id_detalleBancoUsuario").append("<option value="+item.id +">"+ item.cuenta +"</option>");
+	});
+});
+	document.addEventListener("DOMContentLoaded", function () {
+		
+		
+		
+		
+		
+		
+    document.getElementById("id_visualizarCuotas").addEventListener("click", function () {
+        calcularCuotasYMontos();
+    });
+
+
+
+    function calcularCuotasYMontos() {
+        var fechaInicio = new Date(document.getElementById("id_fechaInicioPrestamo").value);
+        var fechaFin = new Date(document.getElementById("id_fechaFinPrestamo").value);
+
+        // Calcula la diferencia en días
+        var diferenciaEnDias = calcularDiferenciaEnDias(fechaInicio, fechaFin);
+
+        // Calcula el monto por cuota
+        var monto = parseFloat(document.getElementById("id_monto").value);
+        
+        var tasaMensual = 20;
+        var tasaDiaria = Math.pow(1 + (tasaMensual / 100), 1 / 30) - 1;
+        console.log(tasaDiaria);
+        var interes = monto * Math.pow(1 + tasaDiaria, diferenciaEnDias) - monto;
+        console.log(interes);
+        monto = monto +interes;
+        
+        var montoPorCuota = monto / diferenciaEnDias;
+
+        // Muestra las cuotas y el monto en el contenedor
+        mostrarCuotasYMonto(diferenciaEnDias, montoPorCuota);
+    }
+
+    function calcularDiferenciaEnDias(fechaInicio, fechaFin) {
+        var unDia = 24 * 60 * 60 * 1000; // 1 día en milisegundos
+        var diferenciaEnMilisegundos = fechaFin - fechaInicio;
+        var diferenciaEnDias = diferenciaEnMilisegundos / unDia;
+        return Math.round(diferenciaEnDias);
+    }
+
+    function mostrarCuotasYMonto(numDias, montoPorCuota) {
+        var cuotasContainer = document.getElementById("cuotasContainer");
+        var montoPorCuotaContainer = document.getElementById("montoPorCuotaContainer");
+
+        cuotasContainer.innerHTML = ""; // Borra el contenido anterior
+        montoPorCuotaContainer.innerHTML = ""; // Borra el contenido anterior
+
+        for (var i = 1; i <= numDias; i++) {
+            cuotasContainer.innerHTML += "Cuota " + i + "<br>";
+        }
+
+        montoPorCuotaContainer.innerHTML = "Monto por Cuota: " + montoPorCuota.toFixed(2);
+    }
+});
+	document.addEventListener("DOMContentLoaded", function () {
+	
+	
+	const fechaInicioPrestamoInput = document.getElementById("id_fechaInicioPrestamo");
+    const diasInput = document.getElementById("id_dias");
+    const fechaFinPrestamoInput = document.getElementById("id_fechaFinPrestamo");
+
+   // Agregar un listener para detectar cambios en el campo "Fecha Inicio Préstamo"
+    fechaInicioPrestamoInput.addEventListener("input", function () {
+        calcularFechaFinPrestamo();
+    });
+
+    diasInput.addEventListener("input", function () {
+        calcularFechaFinPrestamo();
+    });
+
+    function calcularFechaFinPrestamo() {
+        const fechaInicioPrestamo = new Date(fechaInicioPrestamoInput.value);
+        const dias = parseInt(diasInput.value);
+
+        if (!isNaN(dias)) {
+            const fechaFinPrestamo = new Date(fechaInicioPrestamo);
+            fechaFinPrestamo.setDate(fechaFinPrestamo.getDate() + dias);
+            fechaFinPrestamoInput.valueAsDate = fechaFinPrestamo;
+        }
+    }
+});	
+   
+$("#id_registrar").click(function (){
+    var validator = $('#id_form').data('bootstrapValidator');
+    validator.validate();
+
+    if (validator.isValid()){
+        $.ajax({
+            type: "POST",
+            url: "/solicitudes",
+            data: $('#id_form').serialize(),
+            success: function(data){
+                console.log(data);
+                mostrarMensaje(data.MENSAJE);
+                validator.resetForm();
+                limpiarFormulario();
+            },
+            error: function(){
+                mostrarMensaje(MSG_ERROR);
+            }
+        });
+    }
+});
+
+$('#id_form').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+        monto: {
+            selector : '#id_monto',
+            validators: {
+                notEmpty: {
+                    message: 'El monto es un campo obligatorio'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/validarFormatoMonto',
+                	message : 'El monto debe ser un número mayor o igual a 10 y no exceder 2500'
+                }
+            }
+        },
+        fechaInicioPrestamo: {
+            selector : '#id_fechaInicioPrestamo',
+            validators: {
+                notEmpty: {
+                    message: 'La fecha Inicio Préstamo es un campo obligatorio'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/validarFechaInicio',
+                	message : 'Debe escoger la fecha de hoy o una posterior'
+                }
+            }
+        },
+        dias: {
+            selector : '#id_dias',
+            validators: {
+                notEmpty: {
+                    message: 'Los días es un campo obligatorio'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/validarFormatoDias',
+                	message : 'Debe indicar una cantidad de días mayor a 0 y menor o igual a 90 días'
+                }
+            }
+        },
+        detalleBancoUsuario: {
+            selector : '#id_detalleBancoUsuario',
+            validators: {
+                notEmpty: {
+                    message: "Seleccione una cuenta"}
+            }
+        }
+        
+    }   
+});
+
+
+$("#id_registrarNumeroCuenta").click(function (){ 
+	var validator = $('#id_form_numeroCuenta').data('bootstrapValidator');
+    validator.validate();
+    
+	if (validator.isValid()){
+		// Obtiene el formulario
+    var form = $('#id_form_numeroCuenta');
+
+    // Obtiene los datos serializados del formulario
+    var formData = form.serialize();
+    console.log('Datos del formulario:', formData);
+		
+		$.ajax({
+    		type: "POST",
+            url: "/solicitudes/crear/numeroCuenta", 
+            data: $('#id_form_numeroCuenta').serialize(),
+            success: function(data){
+            	console.log(data);
+            	mostrarMensaje(data.MENSAJE);
+            	validator.resetForm();
+            	limpiarFormularioNumeroCuenta();
+            	
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	}   
+});
+function limpiarFormularioNumeroCuenta(){
+	$('#id_cuenta').val('');
+	$('#id_banco').val(' ');
+}
+$('#id_form_numeroCuenta').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+        banco: {
+            selector : '#id_banco',
+            validators: {
+                notEmpty: {
+                    message: 'El banco es un campo obligatorio'
+                }
+            }
+        },
+        cuenta: {
+            selector : '#id_cuenta',
+            validators: {
+                notEmpty: {
+                    message: 'El número de cuenta es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El número de cuenta tiene 20 caracteres',
+                	min : 20,
+                	max : 20
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaNumeroCuenta',
+                	message : 'Ya se ha registrado ese número de cuenta'
+                }
+                
+            }
+        }
+    }   
+});
+</script>
+
+
+</body>
+</html> 

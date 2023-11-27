@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	<title>Listado de Prestamistas</title>
+</head>
+<body id="page-top">
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				
+				<div class="container-fluid">
+					<!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Lista de Prestamistas</h5>
+                        </div>
+                        <div class="card-body">
+							
+							<div class="row row-cols-auto">
+								
+								<div class="col-sm-2">
+				                    <div class="d-grid ">
+				                        <a class="btn btn-primary" type="button" data-toggle="modal" data-target="#modalPrestamistas"><i class="fas fa-plus"></i> Nuevo Prestamista</a>
+				                    </div>
+				                </div>
+								
+								<div class="col-sm-2">
+				                    <div class="d-grid " style="display: none;">
+				                        <a th:href="@{/usuarios(format=pdf)}" class="btn btn-danger"><i class="fas fa-file-pdf"></i> Exportar PDF</a>
+				                    </div>
+				                </div>
+				                
+				                <div class="col-sm-2">
+				                    <div class="d-grid " style="display: none;">
+				                        <a th:href="@{/usuarios(format=xlsx)}" class="btn btn-success"><i class="fas fa-file-excel"></i> Exportar EXCEL</a>
+				                    </div>
+				                </div>
+					            
+					            
+					            
+					            
+					            
+					        </div>
+							<hr>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombres</th>
+                                            <th>Apellido Paterno</th>
+                                            <th>Apellido Materno</th>
+                                            <th>Estado</th>
+                                            <th>Fecha nacimiento</th>
+                                            <th>Email</th>
+                                            <th>DNI</th>
+                                            <th>Telefono</th>
+                                            <th th:if="${mostrarSedeNombre}">Sede</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        
+                                       
+                                        <tr th:each="prestamista : ${listaPrestamistas}">
+                                            <td th:text="${prestamista.nombres}"></td>
+                                            <td th:text="${prestamista.paterno}"></td>
+                                            <td th:text="${prestamista.materno}"></td>
+                                            <td th:text="${prestamista.estado == 1 ? 'Activo' : 'Inactivo'}"></td>
+                                            <td th:text="${prestamista.fechaNacimiento}"></td>
+                                            <td th:text="${prestamista.email}"></td>
+                                            <td th:text="${prestamista.numeroDocumento}"></td>
+                                            <td th:text="${prestamista.telefono}"></td>
+                                            <td th:if="${mostrarSedeNombre}" th:text="${prestamista.sede.nombre}"></td>
+                                            <td>
+												<div class="btn-group">
+													
+													<a th:href="@{/prestamistas/editar/{id}(id=${prestamista.id})}" class="btn btn-primary btn-sm btn-editar"><i class="fas fa-pen"></i></a>
+													<!--<a th:href="@{/prestamistas/{id}(id=${prestamista.id})}" class="btn btn-danger btn-sm ms-2 btn-eliminar" style="margin-left: 0.5rem !important;"><i class="fas fa-trash"></i></a>-->
+													<!--AGREGO SWITCH-->
+													<div class="boton">
+														    <input type="checkbox" data-id="${prestamista.id}" th:checked="${prestamista.estado == 1}" class="btn-switch">
+														    <label class="lbl-switch" style="margin-bottom: 0;"></label>
+														    <a th:href="@{/prestamistas/{id}(id=${prestamista.id})}" class="btn btn-danger btn-sm ms-2 btn-elimina" style="margin-top: 5px ;"></a>
+														</div>
+												</div>
+											</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                   
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- begin #modal-dialog : MODAL USUARIO-->
+		<div class="modal fade" id="modalPrestamistas" data-backdrop="static" data-keyboard="false" tabindex="-1"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-login modal-lg">
+				<div class="modal-content">
+					<div class="modal-header bg-blue-darker">
+						<h4 class="m-0 font-weight-bold text-light">Usuario</h4>
+					</div>
+					<div class="modal-body">
+						<form method="POST" th:action="@{/prestamistas}" id="id_form">
+							
+							<div class="container">
+								<div class="row">
+									
+									<div class="form-group col-md-4 custom-input">
+				                        <label>Nombres: </label>
+				                        <input type="text" id="id_nombres" name="nombres" class="form-control"
+				                               placeholder="Introduzca su nombre: " required></input>
+									</div>
+									<div class="form-group col-md-4 custom-input">
+				                        <label>Apellido Paterno: </label>
+				                        <input type="text" id="id_paterno" name="paterno" class="form-control"
+				                               placeholder="Introduzca su apellido paterno: " required></input>
+									</div>
+									<div class="form-group col-md-4 custom-input">
+				                        <label>Apellido Materno: </label>
+				                        <input type="text" id="id_materno" name="materno" class="form-control"
+				                               placeholder="Introduzca su apellido materno: " required></input>
+									</div>
+									<div class="form-group col-md-4 custom-input">
+										<label>Fecha de nacimento: </label>
+				                        <input type="date" id="id_fechaNacimiento" name="fechaNacimiento" class="form-control" required>
+									</div>
+								
+									<div class="form-group col-md-4">
+				                        <label>Contraseña: </label>
+				                        <input type="text" id="id_password" name="password" class="form-control"
+				                               placeholder="Introduzca su contraseña: " required></input>
+									</div>
+									<div class="form-group col-md-4 custom-input">
+				                        <label>Email : </label>
+				                        <input type="text" id="id_email" name="email" class="form-control"
+				                               placeholder="Introduzca su email: " required></input>
+									</div>
+									<div class="form-group col-md-4 custom-input">
+				                        <label>DNI : </label>
+				                        <input type="number" id="id_numeroDocumento" name="numeroDocumento" class="form-control"
+				                               placeholder="Introduzca su dni: " required></input>
+									</div>
+									<div class="form-group col-md-4 custom-input">
+				                        <label>Teléfono : </label>
+				                        <input type="text" id="id_telefono" name="telefono"  class="form-control"
+				                               placeholder="Introduzca su telefono: " required></input>
+									</div>
+				                    
+									
+								</div>
+							</div>
+							<div class="col-md-12 text-center mt-4">
+								<button type="button" id="id_registrar" class="btn btn-primary"><i class="fas fa-save"></i>
+									Registrar</button>
+								<button type="button" id="btn-cerrar" class="btn btn-danger" data-dismiss="modal"  style="margin-left: 0.5rem !important;"><i
+										class="fas fa-undo-alt"></i> Cancelar</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- FIN Modal MEDICAMENTO-->
+
+
+
+
+
+	<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+	
+	
+	<script>
+	$("#id_registrar").click(function (){ 
+	var validator = $('#id_form').data('bootstrapValidator');
+    validator.validate();
+    
+	if (validator.isValid()){
+		$.ajax({
+    		type: "POST",
+            url: "/prestamistas", 
+            data: $('#id_form').serialize(),
+            success: function(data){
+            	console.log(data);
+            	mostrarMensaje(data.MENSAJE, function () {
+                    // Redirige a la página deseada después de hacer clic en "Aceptar" en el modal
+                    location.reload();
+                });
+            	validator.resetForm();
+            	limpiarFormulario();
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	}   
+});
+$(document).ready(function() {
+    $(document).on("change", ".btn-switch", function() {
+        var prestaId = $(this).data("id");
+        var estado = $(this).prop("checked") ? 1 : 0; 
+        actualizarEstadoPrestamista(prestaId, estado);
+    });
+});
+
+
+
+
+function actualizarEstadoPrestamista(prestaId, estado) {
+    console.log("Prestamista ID:", prestaId);
+    console.log("Estado:", estado);
+    $.ajax({
+        type: "GET", 
+        url: "/prestamistas/" + prestaId,
+        data: {
+            prestaId: prestaId,
+            estado: estado
+        },
+        success: function(data) {
+            
+            window.location.href = "/prestamistas";
+        },
+        error: function() {
+            alert("Error al actualizar el estado del usuario.");
+        }
+    });
+}
+
+
+function limpiarFormulario(){
+	$('#id_nombres').val('');
+	$('#id_paterno').val('');
+	$('#id_materno').val('');
+	$('#id_fechaNacimiento').val('');
+	$('#id_password').val('');
+	$('#id_email').val('');
+	$('#id_numeroDocumento').val('');
+	$('#id_telefono').val('');
+}
+$('#id_form').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+    	nombres: {
+    		selector : '#id_nombres',
+            validators: {
+                notEmpty: {
+                    message: 'El nombre es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El nombre es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        paterno: {
+    		selector : '#id_paterno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido paterno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido paterno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        materno: {
+    		selector : '#id_materno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido materno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido materno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        fechaNacimiento: {
+    		selector : '#id_fechaNacimiento',
+            validators: {
+                notEmpty: {
+                    message: 'La fecha de nacimiento es un campo obligatorio'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioMayorEdad',
+                	message : 'El usuario debe ser mayor de edad'
+                }
+            }
+        },
+        password: {
+    		selector : '#id_password',
+            validators: {
+            	notEmpty: {
+                    message: 'La contraseña es un campo obligatorio'
+                }
+            }
+            
+        },
+        email: {
+    		selector : '#id_email',
+            validators: {
+            	notEmpty: {
+                    message: 'Email es un campo obligatorio'
+                },
+                regexp: {
+                    regexp: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: 'El correo no tiene el formato correcto'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorEmail',
+                	message : 'El Email ya existe'
+                }
+            }
+        },
+        numeroDocumento: {
+    		selector : '#id_numeroDocumento',
+            validators: {
+                notEmpty: {
+                    message: 'El DNI es un campo obligatorio'
+                },
+                
+                regexp: {
+                    regexp: /^[0-9]{8}$/,
+                    message: 'El DNI es de 8 caracteres y solo números'
+                }
+                ,
+                remote:{
+                	delay: 1000,
+                	url:'buscaUsuarioPorDNI',
+                	message : 'El DNI ya existe'
+                }
+            }
+        },
+        telefono:{
+			selector : '#id_telefono',
+            validators: {
+                notEmpty: {
+                    message: 'El teléfono es un campo obligatorio'
+                },
+                
+                regexp: {
+                    regexp: /^[0-9]{9}$/,
+                    message: 'El teléfono contiene 9 caracteres y solo números'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorTelefono',
+                	message : 'El Teléfono ya existe'
+                }
+                
+            }
+		}
+    }   
+});
+</script>
+	
+	<!-- Inicialización de la DataTable con idioma español -->
+		<script>
+			var table = $('#dataTable').DataTable({
+    			language: {
+        "decimal": "",
+        "emptyTable": "No hay información",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+        "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+        "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Mostrar _MENU_ Entradas",
+        "loadingRecords": "Cargando...",
+        "processing": "Procesando...",
+        "search": "Buscar:",
+        "zeroRecords": "Sin resultados encontrados",
+        "paginate": {
+            "first": "Primero",
+            "last": "Ultimo",
+            "next": "Siguiente",
+            "previous": "Anterior"
+        }
+    },
+});
+		</script>
+
+<!-- Creo tabla dentro de un container -->
+<!-- <div class="container">
+	<div class="row">
+		<h1>Lista de Prestamistas</h1>
+	</div>
+	</br>
+	<div class="row">
+		<div class="col-lg-3">
+			<a th:href="@{/prestamistas/nuevo}" class="btn btn-primary btn-sm mb-3">Agregar Prestamista</a>
+		</div>
+	</div>
+	  <form class="row g-3 needs-validation " novalidate>
+	  <div class="form-group mx-sm-3 mb-2">
+	    <label for="validationCustom01" class="form-label">Nombres</label>
+	    <input type="text" class="palabraNombre" id="palabraNombre" th:value="${palabraNombre}" placeholder="Ingrese Nombre">
+	    <div class="valid-feedback">
+	      Looks good!
+	    </div>
+	  </div>
+	  <div class="form-group mx-sm-3 mb-2">
+	    <label for="validationCustom02" class="form-label">Apellido Paterno</label>
+	    <input type="text" class="form-control" id="validationCustom02">
+	    <div class="valid-feedback">
+	      Looks good!
+	    </div>
+	  </div>
+	     <input type="submit" class="btn btn-primary mb-2" value="Buscar">
+	  </form>
+	</br>
+
+	<div id="alertMessage" class="alert" style="display:none;"></div>
+
+
+	<table class="table table-striped table-bordered">
+		<thead class="thead-dark">
+		<tr>
+			<th>Nombres</th>
+			<th>Apellido Paterno</th>
+			<th>Apellido Materno</th>
+			<th>Fecha nacimiento</th>
+			<th>Contraseña</th>
+			<th>Email</th>
+			<th>DNI</th>
+			<th>Telefono</th>
+			<th>Acciones</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="prestamista : ${listaPrestamistas}">
+			<td th:text="${prestamista.nombres}">Nombre</td>
+			<td th:text="${prestamista.paterno}">Apellido Paterno</td>
+			<td th:text="${prestamista.materno}">Apellido Materno</td>
+			<td th:text="${prestamista.fechaNacimiento}">Fecha nacimiento</td>
+		<td th:text="${usuario.password}">Contraseña</td>
+			<td th:text="${prestamista.email}">Email</td>
+			<td th:text="${prestamista.numeroDocumento}">DNI</td>
+			<td th:text="${prestamista.telefono}">Telefono</td>
+
+			<td>
+				<div class="btn-group">
+					<a th:href="@{/prestamistas/editar/{id}(id=${prestamista.id})}" class="btn btn-info">Editar</a>
+					<a th:href="@{/prestamistas/{id}(id=${prestamista.id})}" class="btn btn-danger">Eliminar</a>
+
+				</div>
+			</td>
+		</tr>
+
+		</tbody>
+	</table>
+</div>-->
+
+</body>
+</html>

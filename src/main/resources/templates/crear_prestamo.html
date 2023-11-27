@@ -1,0 +1,180 @@
+<!--
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+	
+
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	
+	<title>Generar Solicitud de Préstamo</title>
+	
+</head>
+
+<body id="page-top"> 
+
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				<div class="container-fluid">
+					<div class="row">
+        <div  class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Solicitar Prestamo</h1>
+            <div class="card-body">
+               <!-- con th:object le estamos pasando el objeto y con method le decimos la clase de petición que es, los formularios siempre son POST -->
+                <form th:action="@{/prestamos}" th:object="${prestamos}" method="POST" id="id_form">
+                    <div class="form-group">
+                        <label>Monto: </label>
+                        <input type="number" id="id_monto" name="monto" th:field="*{ }" class="form-control"
+                               placeholder="Introduzca el monto a solicitar: " required></input>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="id">Tipo Pretamo</label>
+						<select th:field="*{tipoPrestamo}" class="form-control" style="height: fit-content;" id="id_prestamo" name="TipoPrestamo.id"  >
+							<option value=" ">[Seleccione]</option>
+							<th:block>
+								<th:block th:each="sede : ${listaTipoPrestamo}">
+						            <option th:value="${TipoPrestamo.id}" th:text="${TipoPrestamo.descripcion}"></option>
+						        </th:block>
+							</th:block>
+						</select>
+					</div>
+                    <br>
+                      <br>
+                    <div class="row" style="text-align: center;">
+						<br>
+	                    <div class="text-center">
+	                        &lt;!&ndash; <button type="submit" class="btn btn-success">Guardar</button> &ndash;&gt;
+	                        <button id="id_registrar" type="button" class="btn btn-primary" >Solicitar</button>
+	                        <a href="/usuarios" class="btn btn-danger ml-2">Cancelar</a>
+	                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+
+<script  type="text/javascript">
+$.getJSON("listaSede", {}, function(data){
+	$.each(data, function(index,item){
+		$("#id_sede").append("<option value="+item.id+">"+item.nombre+"</option>");
+	});
+});
+
+$("#id_registrar").click(function (){ 
+	var validator = $('#id_form').data('bootstrapValidator');
+    validator.validate();
+    
+	if (validator.isValid()){
+		$.ajax({
+    		type: "POST",
+            url: "/usuarios", 
+            data: $('#id_form').serialize(),
+            success: function(data){
+            	console.log(data);
+            	mostrarMensaje(data.MENSAJE);
+            	validator.resetForm();
+            	limpiarFormulario();
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	}   
+});
+function limpiarFormulario(){
+	$('#id_monto').val('');
+	$('#id_prestamo').val(' ');
+}
+
+
+
+$('#id_form').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+        sede: {
+			selector : '#id_prestamo',
+            validators: {
+                notEmpty: {
+                    message: 'Debes seleccionar un tipo de prestamo.'
+                }
+            }
+        }
+    }   
+});
+
+</script>
+
+</body>
+</html>-->
+
+
+
+
+<!--forma 2-->
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="plantilla_menu/MenuTemplate :: cabecera">
+	<title>Solicitar Préstamo</title>
+</head>
+<body id="page-top">
+<div id="wrapper">
+	<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+	<div id="content-wrapper" class="d-flex flex-column">
+		<div id="content">
+			<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+						<h1 class="text-center">Solicitar Préstamo</h1>
+						<div class="card-body">
+							<form th:action="@{/prestamos/nuevo}" th:object="${prestamo}" method="post" id="id_form">
+								<div class="form-group">
+									<label>Monto:</label>
+									<input type="number" id="id_monto" th:field="*{monto}" class="form-control"
+										   placeholder="Introduzca el monto a solicitar" required />
+								</div>
+								<label class="control-label" for="id_prestamo">Tipo Préstamo</label>
+								<select th:field="*{tipoPrestamo}" class="form-control" style="height: fit-content;" id="id_prestamo" name="tipoPrestamo.id">
+									<option value=" ">[Seleccione]</option>
+									<th:block th:each="tipo : ${listaTipoPrestamo}">
+										<option th:value="${tipo.id}" th:text="${tipo.descripcion}"></option>
+									</th:block>
+								</select>
+
+
+								<br />
+								<br />
+								<div class="row" style="text-align: center;">
+									<br />
+									<div class="text-center">
+										<button id="id_registrar" type="submit" class="btn btn-primary">Solicitar</button>
+										<a href="/usuarios" class="btn btn-danger ml-2">Cancelar</a>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+<script type="text/javascript">
+	// JavaScript
+	// ...
+</script>
+</body>
+</html>-->

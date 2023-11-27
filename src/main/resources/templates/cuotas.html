@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	<title>Pagar cuotas de Préstamo</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body id="page-top">
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				
+				<div class="container-fluid">
+					<!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Consulta de Cuotas</h5>
+                        </div>
+                        <div class="card-body">
+							
+							
+								<form class="form" th:action="@{/cuotas}">
+									<div class="row"> 
+										
+										<div  th:if="${mostrarTextPrestatario}" class="col-md-3" style="margin: 10px;">
+	                                        <label  th:if="${mostrarTextPrestatario}" for="prestatario" style="text-align: left;">Prestatario:</label>
+	                                        <input  th:if="${mostrarTextPrestatario}" type="text" id="id_prestatario" name="prestatario" class="form-control" />
+	                                 	 </div>
+		
+		                                 <div class="col-md-1"></div>
+		                                 <div class="col-md-3" style="margin: 10px;">
+		                                        <label for="desde" style="text-align: left;">Desde:</label>
+		                                        <input type="date" id="id_desde" name="desde" class="form-control" />
+		                                  </div>
+		                                  <div class="col-md-1"></div>
+		                                  <div class="col-md-3" style="margin: 10px;">
+		                                        <label for="hasta" style="text-align: left;">Hasta:</label>
+		                                        <input type="date" id="id_hasta" name="hasta" class="form-control" />
+		                                  </div>
+									</div>
+									<div class="row" style="text-align: center;">
+										<div  class="col-md-12" style="margin: 10px;" >
+									  		<button type="submit" id="id_btn_filtrar" class="btn btn-primary" style="width: 150px">FILTRA</button>
+									  	</div>	
+									</div>	  
+								</form>
+							
+							<hr>
+							<!-- 
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+											<th>Id Préstamo</th>
+                                            <th th:if="${mostrarTextPrestatario}">Prestatario</th>
+                                            <th>Cuota</th>
+                                            <th>Monto</th>
+                                            <th>Fec. Vencimiento</th>
+                                           <!--  <th>Deuda</th>-->
+                                           <!-- 
+                                            <th>Estado</th>
+                                            <th>Realizar Pagos</th>
+                                           <!-- <th th:if="${mostrarSedeNombre}">Sede</th> -->
+                                        <!--     
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="cuota : ${cuotas}">
+											<td th:text="${cuota.prestamo.Id}"></td>
+											<td th:if="${mostrarTextPrestatario}" th:text="${cuota.prestamo.usuarioPrestatario.nombres + ' ' + cuota.prestamo.usuarioPrestatario.paterno+ ' ' + cuota.prestamo.usuarioPrestatario.materno}"></td>
+                                            <td th:text="${cuota.numero}"></td>
+                                            <td th:text="${cuota.monto}"></td>
+                                            <td th:text="${cuota.fechaPago}"></td>
+                                            
+                                           	<td th:text="${cuota.estado == 1 ? 'En proceso' 
+						                    : cuota.estado == 0 ? 'Rechazado' 
+						                    : cuota.estado == 2 ? 'Aprobado' 
+						                    : 'Estado Desconocido'}"></td>
+						                    <td>
+												<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#myModalPagoTotal" style="margin-top: 10px;">
+													Pago Total
+												</button>
+												<button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#myModalPagoparcial1" style="margin-top: 10px;">
+													Pago Parcial 1
+												</button>
+												<button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#myModalPagoparcial2" style="margin-top: 10px;">
+													Pago Parcial 2
+												</button>
+
+											</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                -->
+                                <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+											<th>ID Prestamo</th>
+											<th style="display: none;">ID Cuota</th>
+								            <th>Prestatario</th>
+								            <th>Nro Cuota</th>
+								            <th>Monto</th>
+								            <th>Fecha Vencimiento</th>
+								            <th>Estado</th>
+								            <th style="display: none;">Fecha Último Pago</th>
+								            <th style="display: none;">Restante</th>
+								            <th style="display: none;">Mora</th>
+								            <th>Deuda</th>
+                                           <!-- 
+                                            <th>Estado</th>
+                                            <th>Realizar Pagos</th>
+                                           <!-- <th th:if="${mostrarSedeNombre}">Sede</th> -->
+                                         <th th:if="${mostrarTextPrestatario}">Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+									    <tr th:each="cuotaInfo : ${cuotas}">
+									        <td th:text="${cuotaInfo.idPrestamo}"></td>
+									        <td style="display: none;" th:text="${cuotaInfo.idCuota}"></td>
+									        <td th:text="${cuotaInfo.nombreUsuario}"></td>
+									        <td th:text="${cuotaInfo.numeroCuota}"></td>
+									        <td th:text="${cuotaInfo.montoCuota}"></td>
+									        <td th:text="${#dates.format(cuotaInfo.fechaVencimiento, 'yyyy-MM-dd')}"></td>
+									        <td>
+									            <!-- Mostrar "En proceso" si el estado es igual a 1, "Pagado" si es igual a 0 -->
+									            <span th:if="${cuotaInfo.estadoCuota == 1}">En proceso</span>
+									            <span th:if="${cuotaInfo.estadoCuota == 0}">Pagado</span>
+									        </td>
+									        <td style="display: none;" th:text="${#dates.format(cuotaInfo.fechaUltimoPago, 'yyyy-MM-dd')}"></td>
+									      	<td style="display: none;" th:text="${cuotaInfo.deuda}"></td>
+									        <td style="display: none;" th:text="${cuotaInfo.mora}"></td>
+									        <td th:text="${cuotaInfo.sumaDeudaMora}"></td>
+									        <td th:if="${mostrarTextPrestatario}">
+								            <!-- Desactivar el botón si el estado es igual a 0 -->
+									            <button   type="button" class="btn btn-outline-success" 
+									                    data-toggle="modal" data-target="#myModalPago" 
+									                    style="margin-top: 10px;" 
+									                    th:disabled="${cuotaInfo.estadoCuota == 0 or (cuotaInfoStat.index > 0 and cuotas[__${cuotaInfoStat.index}__ - 1].estadoCuota == 1 and cuotas[__${cuotaInfoStat.index}__ - 1].idPrestamo == cuotaInfo.idPrestamo)}">
+									                Pago
+									            </button>
+							       			 </td>
+							   			 </tr>
+									</tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+				<!-- Modal para tipos de pagos -->
+
+				<div class="modal fade" id="myModalPago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Realizar Pago</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario para el monto de pago -->
+                <form id="pagoForm" action="/pagar" method="post" >
+					<div class="row">
+                        <div class="col-md-6">
+                            <label for="idCuotaPago">Id Cuota:</label>
+                            <input type="text" class="form-control" id="idCuotaPago" name="idCuotaPago" readonly>
+                        </div>
+                    </div>
+                    <!-- Primera fila -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="idPrestamoPago">Id Préstamo:</label>
+                            <input type="text" class="form-control" id="idPrestamoPago" name="idPrestamoPago" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="numeroCuota">Número de Cuota:</label>
+                            <input type="text" class="form-control" id="numeroCuota" name="numeroCuota" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="nombrePrestatario">Nombre prestatario:</label>
+                            <input type="text" class="form-control" id="nombrePrestatario" name="nombrePrestatario" readonly>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-6">
+                            <label for="montoCuota">Monto faltante:</label>
+                            <input type="text" class="form-control" id="montoCuota" name="montoCuota" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="moraPago">Mora:</label>
+                            <input type="text" class="form-control" id="moraPago" name="moraPago" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Segunda fila -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="fechaVencimiento">Fecha de Vencimiento:</label>
+                            <input type="text" class="form-control" id="fechaVencimiento" name="fechaVencimiento" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="deuda">Deuda:</label>
+                            <input type="text" class="form-control" id="deuda" name="deuda" readonly>
+                        </div>
+                    </div>
+					<div class="row">
+                        <div class="col-md-6">
+                            <label for="montoPago">Monto de Pago:</label>
+                            <input type="text" class="form-control" id="montoPago" name="montoPago">
+                        </div>
+                    </div>
+                    <!-- Botón de Pagar -->
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <button type="button" id="id_pagar" class="btn btn-primary" >Pagar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+<script>
+<!-- Inicialización de la DataTable con idioma español -->
+		
+			
+			
+			var table = $('#dataTable').DataTable({
+    			language: {
+        "decimal": "",
+        "emptyTable": "No hay información",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+        "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+        "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Mostrar _MENU_ Entradas",
+        "loadingRecords": "Cargando...",
+        "processing": "Procesando...",
+        "search": "Buscar:",
+        "zeroRecords": "Sin resultados encontrados",
+        "paginate": {
+            "first": "Primero",
+            "last": "Ultimo",
+            "next": "Siguiente",
+            "previous": "Anterior"
+        }
+    },
+});
+$("#id_btn_filtrar").click(function() {
+    
+    var varFecDesde = $("#id_desde").val();
+    var varFecHasta = $("#id_hasta").val();
+
+    
+    console.log("Valor de desde: " + varFecDesde);
+    console.log("Valor de hasta: " + varFecHasta);
+
+    if (valFechaInicioMayFechaFin("#id_desde", "#id_hasta")) {
+        alert("La fecha hasta es superior a la fecha desde");
+       
+        return;
+    }
+});
+
+$(document).ready(function() {
+	 // Función para actualizar eventos y manipulaciones después de cada dibujo
+    function actualizarEventos() {
+    // Capturar el clic en el botón "Pago Total" de cada fila
+    $('button[data-target="#myModalPago"]').click(function() {
+        // Obtener la fila correspondiente a este botón
+        var row = $(this).closest('tr');
+        
+        // Obtener el monto de la columna "Monto" en esa fila
+        var idPrestamo = row.find('td:nth-child(1)').text()
+	    var idCuota = row.find('td:nth-child(2)').text()
+	    var nombrePrestatario = row.find('td:nth-child(3)').text()
+	    var numeroCuota = row.find('td:nth-child(4)').text()
+	    var montoCuota = row.find('td:nth-child(9)').text()
+	    var fechaVencimiento = row.find('td:nth-child(6)').text()
+	    var mora = row.find('td:nth-child(10)').text()
+	    var deuda = row.find('td:nth-child(11)').text()
+        // Llenar el campo "Monto a pagar" en el modal "Pago Total"
+        $('#idPrestamoPago').val(idPrestamo);
+        $('#idCuotaPago').val(idCuota);
+        $('#nombrePrestatario').val(nombrePrestatario);
+        $('#numeroCuota').val(numeroCuota);
+        $('#montoCuota').val(montoCuota);  
+        $('#fechaVencimiento').val(fechaVencimiento);     
+        $('#moraPago').val(mora); 
+        $('#deuda').val(deuda);     
+    });
+    }
+    // Actualizar eventos después de cada dibujo
+    table.on('draw.dt', function() {
+        actualizarEventos();
+    });
+
+    // Llamada inicial para configurar eventos en la primera carga
+    actualizarEventos();
+});
+$("#id_pagar").click(function (){ 
+	var validator = $('#pagoForm').data('bootstrapValidator');
+   validator.validate();
+    var idCuota = document.getElementById("idCuotaPago").value;
+        var monto = document.getElementById("montoPago").value;
+        var mora = document.getElementById("moraPago").value;
+        var deuda = document.getElementById("deuda").value;
+        var numeroCuota = document.getElementById("numeroCuota").value;
+        var datosPago = {
+        	idCuota: idCuota,
+            monto: monto,
+            mora: mora,
+            deuda: deuda,
+            numeroCuota:numeroCuota
+            // Otros campos...
+        };
+
+	if (validator.isValid()){
+		$.ajax({
+    		type: "POST",
+            url: "/pagar", 
+            data: datosPago,
+            success: function(data){
+            	console.log(data);
+            	mostrarMensaje(data.MENSAJE, function () {
+                    // Redirige a la página deseada después de hacer clic en "Aceptar" en el modal
+                    location.reload();
+                });
+            	validator.resetForm();
+            	//limpiarFormulario();
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	}   
+});
+
+$('#pagoForm').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+    	montoPago: {
+    		selector : '#montoPago',
+            validators: {
+                notEmpty: {
+                    message: 'Debe colocar un monto'
+                },
+                remote: {
+                    delay: 1000,
+                    url: '/validarMontoPago',  // Endpoint en tu servidor para validar el monto
+                    message: 'El monto debe ser mayor que la mora y menor o igual que la deuda',
+                    data: {
+                            montoPago: function() {
+		                    // Obtén el valor del correo electrónico desde donde lo tengas en tu formulario
+		                    	return $('#montoPago').val();
+		                    },
+                            mora: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    	return $('#moraPago').val();
+		                    },
+                            deuda: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    	return $('#deuda').val();
+		                    }
+                    }
+                }
+           	}
+        }
+    }   
+});
+
+
+
+
+
+
+
+//----------------------BOTON PAGO TOTAL-----------------------------------
+$(document).ready(function() {
+    // Capturar el clic en el botón "Pago Total" de cada fila
+    $('button[data-target="#myModalPagoTotal"]').click(function() {
+        // Obtener la fila correspondiente a este botón
+        var row = $(this).closest('tr');
+        
+        // Obtener el monto de la columna "Monto" en esa fila
+        var monto = row.find('td:nth-child(3)').text(); // Ajusta el número según la posición de la columna
+        var fechaVen = row.find('td:nth-child(4)').text();
+        var cuota = row.find('td:nth-child(1)').text()
+        var prestatario = row.find('td:nth-child(2)').text()
+        
+        // Llenar el campo "Monto a pagar" en el modal "Pago Total"
+        $('#id_monto').val(monto);
+        $('#id_fechaVencimiento').val(fechaVen);
+        $('#id_cuota').val(cuota);
+        $('#id_prestatario').val(prestatario);    
+    });
+});
+//----------------------BOTON PAGO PARCIAL 1-----------------------------------
+$('button[data-target="#myModalPagoparcial1"]').click(function() {
+    var row = $(this).closest('tr');
+
+    // Obtener los valores de la fila
+    var prestatario = row.find('td:nth-child(2)').text(); // Nombre del prestatario
+    var idCuota = row.find('td:nth-child(1)').text(); // ID de la cuota
+    var fechaVencimiento = row.find('td:nth-child(4)').text(); // Fecha de vencimiento
+
+    // Asignar los valores al modal de Pago Parcial 1
+    $('#id_prestatario1').val(prestatario);
+    $('#id_cuota1').val(idCuota);
+    $('#id_fechaVencimiento1').val(fechaVencimiento);
+});
+//----------------------BOTON PAGO PARCIAL 2-----------------------------------
+$('button[data-target="#myModalPagoparcial2"]').click(function() {
+    var row = $(this).closest('tr');
+
+    // Obtener los valores de la fila
+    var prestatario = row.find('td:nth-child(2)').text(); // Nombre del prestatario
+    var idCuota = row.find('td:nth-child(1)').text(); // ID de la cuota
+    var fechaVencimiento = row.find('td:nth-child(4)').text(); // Fecha de vencimiento
+
+    // Asignar los valores al modal de Pago Parcial 2
+    $('#id_prestatario2').val(prestatario);
+    $('#id_cuota2').val(idCuota);
+    $('#id_fechaVencimiento2').val(fechaVencimiento);
+});
+//-----------------------------------------------------------------------------
+$(document).ready(function() {
+    // Función para calcular la mora
+    function calcularMora(fechaPago) {
+        var fechaActual = new Date();
+        var fechaPagoDate = new Date(fechaPago);
+        
+        if (fechaActual > fechaPagoDate) {
+            var diferenciaDias = (fechaActual - fechaPagoDate ) / (1000 * 60 * 60 * 24); // Diferencia en días
+            var moraDiaria = 4; // Valor de la mora por día
+            return diferenciaDias * moraDiaria;
+        } else {
+            return 0; // Si la fecha actual es antes de la fecha de vencimiento, la mora es cero
+        }
+    }
+
+    // Capturar el clic en el botón "Pago Total" de cada fila
+    $('button[data-target="#myModalPagoTotal"]').click(function() {
+        // Obtener la fila correspondiente a este botón
+        var row = $(this).closest('tr');
+        
+        // Obtener el monto de la columna "Monto" en esa fila
+        var monto = parseFloat(row.find('td:nth-child(3)').text()); // Ajusta el número según la posición de la columna
+        var fechaPago = row.find('td:nth-child(4)').text(); // Obtener la fecha de pago de la cuota
+
+        // Calcular la mora
+        var mora = calcularMora(fechaPago);
+
+        // Llenar el campo "Mora" en el modal "Pago Total"
+        $('#id_mora').val(mora.toFixed(2)); // Ajusta el número de decimales según tu preferencia
+
+        // Calcular y llenar el campo "Monto a pagar" en el modal "Pago Total"
+        var montoTotal = monto + mora;
+        $('#id_monto').val(montoTotal.toFixed(2)); // Ajusta el número de decimales según tu preferencia
+
+        // Capturar el clic en el botón "Pagar" del modal
+        $('#myModalPagoTotal button.btn-outline-primary').click(function() {
+            // Aquí puedes realizar acciones adicionales al presionar el botón "Pagar"
+            // Por ejemplo, enviar el monto total para procesamiento o realizar una acción específica.
+            // En este ejemplo, solo se muestra un mensaje con el monto total a pagar.
+            alert('Monto a pagar: ' + montoTotal.toFixed(2));
+        });
+    });
+});
+
+
+
+</script>
+</body>
+</html>

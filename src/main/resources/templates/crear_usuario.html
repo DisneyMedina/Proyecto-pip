@@ -1,0 +1,295 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+	
+
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	
+
+	<title>Crear Usuario</title>
+	 
+</head>
+
+<body id="page-top"> 
+
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				<div class="container-fluid">
+					<div class="row">
+        <div  class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Registro de Usuario</h1>
+            <div class="card-body">
+                <!-- con th:object le estamos pasando el objeto y con method le decimos la clase de petición que es, los formularios siempre son POST-->
+                <form th:action="@{/usuarios}" th:object="${usuario}" method="POST" id="id_form">
+                    <div class="form-group">
+                        <label>Nombres: </label>
+                        <input type="text" id="id_nombres" name="nombres" th:field="*{nombres}" class="form-control"
+                               placeholder="Introduzca su nombre: " required></input>
+					</div>
+					<div class="form-group">
+                        <label>Apellido Paterno: </label>
+                        <input type="text" id="id_paterno" name="paterno" th:field="*{paterno}" class="form-control"
+                               placeholder="Introduzca su apellido paterno: " required></input>
+					</div>
+					<div class="form-group">
+                        <label>Apellido Materno: </label>
+                        <input type="text" id="id_materno" name="materno" th:field="*{materno}" class="form-control"
+                               placeholder="Introduzca su apellido materno: " required></input>
+					</div>
+					<div class="form-group">
+						<label>Fecha de nacimento: </label>
+                        <input type="date" id="id_fechaNacimiento" name="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label for="id_sede">Sede</label>
+						<select th:field="*{sede}" class="form-control" style="height: fit-content;" id="id_sede" name="sede.idSede"  >
+							<option value=" ">[Seleccione]</option>
+							<th:block>
+								<th:block th:each="sede : ${listaSede}">
+						            <option th:value="${sede.id}" th:text="${sede.nombre}"></option>
+						        </th:block>
+							</th:block>
+						</select>
+					</div>
+					<div class="form-group">
+                        <label>Contraseña: </label>
+                        <input type="password" id="id_password" name="password" th:field="*{password}" class="form-control"
+                               placeholder="Introduzca su contraseña: " required></input>
+					</div>
+					<div class="form-group">
+                        <label>Email : </label>
+                        <input type="text" id="id_email" name="email" th:field="*{email}" class="form-control"
+                               placeholder="Introduzca su email: " required></input>
+					</div>
+					<div class="form-group">
+                        <label>DNI : </label>
+                        <input type="number" id="id_numeroDocumento" name="numeroDocumento" th:field="*{numeroDocumento}" class="form-control"
+                               placeholder="Introduzca su dni: " required></input>
+					</div>
+					<div class="form-group">
+                        <label>Teléfono : </label>
+                        <input type="text" id="id_telefono" name="telefono" th:field="*{telefono}" class="form-control"
+                               placeholder="Introduzca su telefono: " required></input>
+					</div>
+                    <br>
+					<div class="form-group row">
+					    <label class="col-form-label col-sm-4">Roles : </label>
+					    <div class="col-sm-8 text-Left">
+					        <th:block th:each="rol : ${listaRoles}">
+					            <div>
+					                <input type="radio" th:id="'id_roles_' + ${rol.id}" name="rolesGroup" th:field="*{roles}" th:value="${rol.id}" class="m-2">
+					                <label th:for="'id_roles_' + ${rol.id}" th:text="${rol.nombre}"></label>
+					            </div>
+					        </th:block>
+    					</div>
+					</div>
+                    <br>
+                    <div class="row" style="text-align: center;">
+						<br>
+	                    <div class="text-center">
+	                        <button id="id_registrar" type="button" class="btn btn-primary" >Registra</button>
+	                        <a href="/usuarios" class="btn btn-danger ml-2">Cancelar</a>
+	                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+
+<script  type="text/javascript">
+
+
+$("#id_registrar").click(function (){ 
+	var validator = $('#id_form').data('bootstrapValidator');
+    validator.validate();
+    
+	if (validator.isValid()){
+		$.ajax({
+    		type: "POST",
+            url: "/usuarios", 
+            data: $('#id_form').serialize(),
+            success: function(data){
+            	console.log(data);
+            	mostrarMensaje(data.MENSAJE);
+            	validator.resetForm();
+            	limpiarFormulario();
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	}   
+});
+function limpiarFormulario(){
+	$('#id_nombres').val('');
+	$('#id_paterno').val('');
+	$('#id_materno').val('');
+	$('#id_fechaNacimiento').val('');
+	$('#id_sede').val(' ');
+	$('#id_password').val('');
+	$('#id_email').val('');
+	$('#id_numeroDocumento').val('');
+	$('#id_telefono').val('');
+	// Deseleccionar todas las opciones del grupo con el atributo name="rolesGroup"
+	//$('input[name="rolesGroup"]').removeProp('checked')
+	$("input:radio[name=rolesGroup]:checked")[0].checked = false;
+}
+
+
+
+$('#id_form').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+    	nombres: {
+    		selector : '#id_nombres',
+            validators: {
+                notEmpty: {
+                    message: 'El nombre es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El nombre es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                },regexp: {
+				    regexp: /^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/,
+				    message: 'El nombre no puede contener carácteres especiales'
+				}
+            }
+        },
+        paterno: {
+    		selector : '#id_paterno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido paterno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido paterno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        materno: {
+    		selector : '#id_materno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido materno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido materno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        fechaNacimiento: {
+    		selector : '#id_fechaNacimiento',
+            validators: {
+                notEmpty: {
+                    message: 'La fecha de nacimiento es un campo obligatorio'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioMayorEdad',
+                	message : 'El usuario debe ser mayor de edad'
+                }
+            }
+        },
+        password: {
+    		selector : '#id_password',
+            validators: {
+            	notEmpty: {
+                    message: 'La contraseña es un campo obligatorio'
+                }
+            }
+            
+        },
+        email: {
+    		selector : '#id_email',
+            validators: {
+            	notEmpty: {
+                    message: 'Email es un campo obligatorio'
+                },
+                regexp: {
+                    regexp: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: 'El correo no tiene el formato correcto'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorEmail',
+                	message : 'El Email ya existe'
+                }
+            }
+        },
+        numeroDocumento: {
+    		selector : '#id_numeroDocumento',
+            validators: {
+                notEmpty: {
+                    message: 'El DNI es un campo obligatorio'
+                },
+                
+                regexp: {
+                    regexp: /^[0-9]{8}$/,
+                    message: 'El DNI es de 8 caracteres y solo números'
+                }
+                ,
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorDNI',
+                	message : 'El DNI ya existe'
+                }
+            }
+        },
+        telefono:{
+			selector : '#id_telefono',
+            validators: {
+                notEmpty: {
+                    message: 'El teléfono es un campo obligatorio'
+                },
+                regexp: {
+                    regexp: /^[0-9]{9}$/,
+                    message: 'El teléfono contiene 9 caracteres y solo números'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorTelefono',
+                	message : 'El Teléfono ya existe'
+                }
+                
+            }
+		},
+		roles: {
+            validators: {
+                notEmpty: {
+                    message: 'Debes seleccionar un rol.'
+                }
+            }
+        },
+        sede: {
+			selector : '#id_sede',
+            validators: {
+                notEmpty: {
+                    message: 'Debes seleccionar una sede.'
+                }
+            }
+        }
+    }   
+});
+
+</script>
+
+</body>
+</html>

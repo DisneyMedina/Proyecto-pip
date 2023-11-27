@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	<title>Editar Usuario</title>
+</head>
+<body id="page-top">
+
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				<div class="container-fluid">
+					<div class="row">
+        <div
+                class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Evaluación de Solicitud de Préstamo</h1>
+            <div class="card-body">
+                <form th:action="@{/registrar_prestamo_y_cuotas}" th:object="${solicitud}" method="POST" id="id_form">
+                    <input type="hidden" id="id_id" name="id" th:field="*{id}" th:value="${solicitud.id}" />
+                    <div class="form-group">
+    <label>Monto: </label>
+    <input type="text" name="monto" id="id_monto" th:field="*{monto}" class="form-control" placeholder="Introduzca su nombre:" required readonly></input>
+</div>
+<div class="form-group">
+    <label>Fecha Inicio Préstamo:</label>
+    <input type="text" id="id_fechaInicioPrestamo" name="fechaInicioPrestamo" th:field="*{fechaInicioPrestamo}" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Fecha Fin Préstamo:</label>
+    <input type="text" id="id_fechaFinPrestamo" name="fechaFinPrestamo" th:field="*{fechaFinPrestamo}" class="form-control" readonly />
+</div>
+                      <!-- Ocultar el campo usuarioPretatario.idUsuario -->
+    <input type="hidden" id="id_usuarioId" name="usuarioId" th:field="*{usuarioPrestatario.id}" th:value="${solicitud.usuarioPrestatario.id}" />
+   
+<div class="form-group">
+    <label>Cantidad de Cuotas:</label>
+    <input type="text" id="id_cantidadCuotas" name="cantidadCuotas" class="form-control" readonly />
+</div>
+
+<div class="form-group">
+    <label>Cuota:</label>
+    <input type="text" id="id_cuota" name="cuota" class="form-control" readonly />
+</div>
+                        <div class="form-group">
+    <label>Estado de Solicitud:</label>
+    <select id="id_estadoSolicitud" name="estadoSolicitud" class="form-control" th:field="*{estado}">
+		<option value="0">Rechazado</option>
+        <option value="1">En Proceso</option>
+        <option value="2">Aprobado</option>
+    </select>
+</div>
+
+                    
+                    <div class="text-center">
+    <button id="id_actualizar" type="button" class="btn btn-primary" onclick="registrarPrestamoYCuotas()">Actualizar</button>
+    <a href="/solicitudes" class="btn btn-danger ml-2">Cancelar</a>
+</div>
+                </form>
+            </div>
+        </div>
+    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- Creo un formulario -->
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+<script>
+function calcularDiferenciaEnDias(fechaInicio, fechaFin) {
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fechaFin);
+    const diferenciaEnMilisegundos = fin - inicio;
+    const diferenciaEnDias = diferenciaEnMilisegundos / (1000 * 60 * 60 * 24);
+    return diferenciaEnDias;
+}
+// Función para llenar los campos de cantidad de cuotas y cuota
+function llenarCampos() {
+    const fechaInicio = document.getElementById("id_fechaInicioPrestamo").value;
+    const fechaFin = document.getElementById("id_fechaFinPrestamo").value;
+    const monto = parseFloat(document.getElementById("id_monto").value);
+    var tasaMensual = 20;
+    if (fechaInicio && fechaFin && monto) {
+        const diferenciaEnDias = calcularDiferenciaEnDias(fechaInicio, fechaFin);
+        const cantidadCuotas = diferenciaEnDias;
+        const tasaDiaria = Math.pow(1 + (tasaMensual / 100), 1 / 30) - 1;
+        const interes =  monto * Math.pow(1 + tasaDiaria, diferenciaEnDias) - monto;
+        const cuota = (monto + interes) / cantidadCuotas;
+
+        document.getElementById("id_cantidadCuotas").value = cantidadCuotas;
+        document.getElementById("id_cuota").value = cuota.toFixed(2);
+    }
+}
+
+
+// Escuchar cambios en las fechas y el monto
+document.getElementById("id_fechaInicioPrestamo").addEventListener("change", llenarCampos);
+document.getElementById("id_fechaFinPrestamo").addEventListener("change", llenarCampos);
+document.getElementById("id_monto").addEventListener("input", llenarCampos);
+
+// Llenar los campos al cargar la página
+llenarCampos();
+$("#id_actualizar").click(function () {
+    var idPrestamo = $("#id_id").val();
+    var monto = $("#id_monto").val();
+    var fechaInicio = $("#id_fechaInicioPrestamo").val();
+    var idUsuarioPrestario = $("#id_usuarioId").val();
+    var fechaFin = $("#id_fechaFinPrestamo").val();
+    var cantidadCuotas = $("#id_cantidadCuotas").val();
+    var montoCuota = $("#id_cuota").val();
+    var estadoSolicitud = $("#id_estadoSolicitud").val();
+
+    // Realizar la solicitud AJAX para registrar préstamo y cuotas
+    $.ajax({
+        type: "POST",
+        url: "/registrar_prestamo_y_cuotas",
+        contentType: "application/json", // Indicar que se envía un objeto JSON
+        data: JSON.stringify({
+            idPrestamo: idPrestamo,
+            monto: monto,
+            fechaInicio: fechaInicio,
+            fechaFin: fechaFin,
+            idUsuarioPrestario: idUsuarioPrestario,
+            cantidadCuotas: cantidadCuotas,
+            montoCuota: montoCuota,
+            estadoSolicitud: estadoSolicitud
+        }),
+        success: function (data) {
+           
+            mostrarMensaje('Actualización con éxito', function () {
+                    // Redirige a la página deseada después de hacer clic en "Aceptar" en el modal
+                    window.location.href = "/solicitudes";
+                });
+        },
+        error: function () {
+            alert('Error al registrar préstamo y cuotas');
+        }
+    });
+});
+</script>
+
+</body>
+</html>

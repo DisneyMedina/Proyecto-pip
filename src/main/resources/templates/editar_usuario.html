@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	<title>Editar Usuario</title>
+</head>
+<body id="page-top">
+
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				<div class="container-fluid">
+					<div class="row">
+        <div
+                class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Editar Usuario</h1>
+            <div class="card-body">
+                <form th:action="@{/usuarios/editar/{id}(id=${usuario.id})}" th:object="${usuario}" method="POST" id="id_form">
+					
+								<div class="row">
+									<input type="hidden" id="id_id" name="id" th:field="*{id}" th:value="${usuario.id}" />
+									<div class="form-group col-md-4">
+				                        <label>Nombres: </label>
+				                        <input type="text" id="id_nombres" name="nombres" th:field="*{nombres}" class="form-control"
+				                               placeholder="Introduzca su nombre: " required></input>
+									</div>
+									<div class="form-group col-md-4">
+				                        <label>Apellido Paterno: </label>
+				                        <input type="text" id="id_paterno" name="paterno" th:field="*{paterno}" class="form-control"
+				                               placeholder="Introduzca su apellido paterno: " required></input>
+									</div>
+									<div class="form-group col-md-4">
+				                        <label>Apellido Materno: </label>
+				                        <input type="text" id="id_materno" name="materno" th:field="*{materno}" class="form-control"
+				                               placeholder="Introduzca su apellido materno: " required></input>
+									</div>
+									<div class="form-group col-md-4">
+										<label>Fecha de nacimento: </label>
+				                        <input type="date" id="id_fechaNacimiento" name="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control" required>
+									</div>
+									<div class="form-group col-md-4">
+										<label for="id_sede">Sede</label>
+										<select th:field="*{sede}" class="form-control" style="height: fit-content;" id="id_sede" name="sede.idSede"  >
+											<option value=" ">[Seleccione]</option>
+											<th:block>
+												<th:block th:each="sede : ${listaSede}">
+										            <option th:value="${sede.id}" th:text="${sede.nombre}"></option>
+										        </th:block>
+											</th:block>
+										</select>
+									</div>
+									<div class="form-group col-md-4">
+									    <label>Contraseña: </label>
+									    <input type="password" id="id_password" name="password" class="form-control"
+									           placeholder="Introduzca su contraseña: " required th:attr="value=${contrasena}" />
+									</div>
+									<div class="form-group col-md-4">
+				                        <label>Email : </label>
+				                        <input type="text" id="id_email" name="email" th:field="*{email}" class="form-control"
+				                               placeholder="Introduzca su email: " required></input>
+									</div>
+									<div class="form-group col-md-4">
+				                        <label>DNI : </label>
+				                        <input type="number" id="id_numeroDocumento" name="numeroDocumento" th:field="*{numeroDocumento}" class="form-control"
+				                               placeholder="Introduzca su dni: " required></input>
+									</div>
+									<div class="form-group col-md-4">
+				                        <label>Teléfono : </label>
+				                        <input type="text" id="id_telefono" name="telefono" th:field="*{telefono}" class="form-control"
+				                               placeholder="Introduzca su telefono: " required></input>
+									</div>
+				                    <br>
+				                    <!-- <div class="form-group row">
+										<label class="col-form-label col-sm-4">Roles : </label>
+					                    <div class="col-sm-8 text-Left">
+											<th:block th:each="rol : ${listaRoles}">
+												<div>
+													<input type="radio" id="id_roles" name="roles" th:field="*{roles}" th:text="${rol.nombre}" th:value="${rol.id}" class="m-2">
+												</div>
+											</th:block>
+					                    </div>
+									</div> -->
+									<div class="form-group col-md-6 mx-auto row ">
+									    <label class="col-form-label col-sm-4">Roles : </label>
+									    <div class="col-sm-8 text-Left">
+									        <th:block th:each="rol : ${listaRoles}">
+									            <div>
+									                <input type="radio" th:id="'id_roles_' + ${rol.id}" name="rolesGroup" th:field="*{roles}" th:value="${rol.id}" class="m-2">
+									                <label th:for="'id_roles_' + ${rol.id}" th:text="${rol.nombre}"></label>
+									            </div>
+									        </th:block>
+				    					</div>
+									</div>
+								</div>
+							
+						
+		
+                        
+                        
+                    <div class="col-md-12 text-center mt-4">
+	                    <!-- <button type="submit" class="btn btn-success">Guardar</button> -->
+	                    <button id="id_actualizar" type="button" class="btn btn-primary" ><i class="fas fa-save"></i> Actualizar</button>
+	                    <a href="/usuarios" class="btn btn-danger ml-2"><i
+										class="fas fa-undo-alt"></i> Cancelar</a>
+               		 </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- Creo un formulario -->
+<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+
+<script  type="text/javascript">
+	/*
+$.getJSON("listaSede", {}, function(data){
+	$.each(data, function(index,item){
+		$("#id_sede").append("<option value="+item.id+">"+item.nombre+"</option>");
+	});
+});*/
+$("#id_actualizar").click(function (){ 
+	var validator = $('#id_form').data('bootstrapValidator');
+    validator.validate();
+    
+	if (validator.isValid()){
+		// Obtén el id de la URL actual
+        var urlActual = window.location.href;
+        var partesURL = urlActual.split("/");
+        var id = partesURL[partesURL.length - 1];
+        // Crea un objeto que contiene el id como parámetro
+        var dataToSend = {
+            id: id
+        };
+        console.log("El valor de id es: " + id);
+		$.ajax({
+    		type: "POST",
+           	url: "/usuarios/editar/" + id,
+            data: $('#id_form').serialize() + '&' + $.param(dataToSend),
+            success: function(data){
+            	console.log(data);
+            	
+            	mostrarMensaje(data.MENSAJE, function () {
+                    // Redirige a la página deseada después de hacer clic en "Aceptar" en el modal
+                    window.location.href = "/usuarios";
+                });
+            	
+            	validator.resetForm();
+            	//window.location.href = "/usuarios";
+            },
+            error: function(){
+            	mostrarMensaje(MSG_ERROR);
+            }
+    	});
+	}   
+});
+
+
+
+$('#id_form').bootstrapValidator({
+    message: 'This value is not valid',
+    feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+    },
+    fields: {
+    	nombres: {
+    		selector : '#id_nombres',
+            validators: {
+                notEmpty: {
+                    message: 'El nombre es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El nombre es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        paterno: {
+    		selector : '#id_paterno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido paterno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido paterno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        materno: {
+    		selector : '#id_materno',
+            validators: {
+                notEmpty: {
+                    message: 'El apellido materno es un campo obligatorio'
+                },
+                stringLength :{
+                	message:'El apellido materno es de 2 a 40 caracteres',
+                	min : 2,
+                	max : 40
+                }
+            }
+        },
+        fechaNacimiento: {
+    		selector : '#id_fechaNacimiento',
+            validators: {
+                notEmpty: {
+                    message: 'La fecha de nacimiento es un campo obligatorio'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioMayorEdad',
+                	message : 'El usuario debe ser mayor de edad'
+                }
+            }
+        },
+        password: {
+    		selector : '#id_password',
+            validators: {
+            	notEmpty: {
+                    message: 'La contraseña es un campo obligatorio'
+                }
+            }
+            
+        },
+        email: {
+    		selector : '#id_email',
+            validators: {
+            	notEmpty: {
+                    message: 'Email es un campo obligatorio'
+                },
+                regexp: {
+                    regexp: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: 'El correo no tiene el formato correcto'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorEmailyIdUsuario',
+                	message : 'El Email ya existe',
+                	data: {
+		                email: function() {
+		                    // Obtén el valor del correo electrónico desde donde lo tengas en tu formulario
+		                    return $('#id_email').val();
+		                },
+		                id: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    return $('#id_id').val();
+		                }
+		            }
+                }
+            }
+        },
+        numeroDocumento: {
+    		selector : '#id_numeroDocumento',
+            validators: {
+                notEmpty: {
+                    message: 'El DNI es un campo obligatorio'
+                },
+                
+                regexp: {
+                    regexp: /^[0-9]{8}$/,
+                    message: 'El DNI es de 8 caracteres y solo números'
+                }
+                ,
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorDNIyIdUsuario',
+                	message : 'El DNI ya existe',
+                	data: {
+		                numeroDocumento: function() {
+		                    // Obtén el valor del correo electrónico desde donde lo tengas en tu formulario
+		                    return $('#id_numeroDocumento').val();
+		                },
+		                id: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    return $('#id_id').val();
+		                }
+		            }
+                }
+            }
+        },
+        telefono:{
+			selector : '#id_telefono',
+            validators: {
+                notEmpty: {
+                    message: 'El teléfono es un campo obligatorio'
+                },
+                
+                regexp: {
+                    regexp: /^[0-9]{9}$/,
+                    message: 'El teléfono contiene 9 caracteres y solo números'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaUsuarioPorTelefonoyIdUsuario',
+                	message : 'El Telefono ya existe',
+                	data: {
+		                telefono: function() {
+		                    // Obtén el valor del correo electrónico desde donde lo tengas en tu formulario
+		                    return $('#id_telefono').val();
+		                },
+		                id: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    return $('#id_id').val();
+		                }
+		            }
+                }
+                
+            }
+		},
+		roles: {
+			//selector : '#id_roles',
+            validators: {
+                notEmpty: {
+                    message: 'Debes seleccionar un rol.'
+                },
+                remote:{
+                	delay: 1000,
+                	url:'/buscaJefePrestamistaSedeConIdUsuario',
+                	message : 'Ya existe un jefe de prestamista en la sede ',
+                	data: {
+		                id: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    return $('#id_id').val();
+		                },
+		                rol: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    if ($('#id_roles_2').prop('checked')) {
+						        // Si está seleccionado, devuelve su valor
+						        return $('#id_roles_2').val();
+						    } else {
+						        // Si no está seleccionado, devuelve un valor predeterminado (en este caso, '0')
+						        return '0';
+						    }
+		                },
+		                sede: function() {
+		                    // Obtén el valor del ID desde donde lo tengas en tu formulario
+		                    return $('#id_sede').val();
+		                }
+		            }
+                }
+            }
+        },
+        sede: {
+			selector : '#id_sede',
+            validators: {
+                notEmpty: {
+                    message: 'Debes seleccionar una sede.'
+                }
+            }
+        }
+    }   
+});
+// Detecta cambios en el campo "sede"
+$('#id_sede').on('change', function () {
+    // Obtiene el valor seleccionado en el campo "sede"
+    var selectedSede = $(this).val();
+
+    // Habilita o deshabilita la validación del campo "roles" según la selección de sede
+    if (selectedSede) {
+        $('#id_roles').attr('data-bv-field', 'roles');
+    } else {
+        $('#id_roles').removeAttr('data-bv-field');
+    }
+
+    // Revalida el formulario para reflejar los cambios en la validación
+    $('#id_form').bootstrapValidator('revalidateField', 'roles');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "plantilla_menu/MenuTemplate :: cabecera">
+	<title>Registra tus solicitudes de Préstamo/title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body id="page-top">
+	<div id="wrapper">
+		<div class="bg-gradient-primary sidebar sidebar-dark accordion" th:insert="plantilla_menu/MenuTemplate :: menu"></div>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<div th:insert="plantilla_menu/MenuTemplate :: topbar"></div>
+				
+				<div class="container-fluid">
+					<!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary">Registra tus solicitudes de Préstamo</h5>
+                        </div>
+                        <div class="card-body">
+							
+							<div th:if="${mostrarTextPrestatario}">
+								<form class="form" th:action="@{/solicitudes}">
+									<div class="row"> 
+										<div class="col-md-3" style="margin: 10px;">
+	                                        <label for="prestatario" style="text-align: left;">Prestatario:</label>
+	                                        <input type="text" id="id_prestatario" name="prestatario" class="form-control" />
+	                                 	</div>
+		                                 <div class="col-md-1"></div>
+		                                 <div class="col-md-3" style="margin: 10px;">
+		                                        <label for="desde" style="text-align: left;">Desde:</label>
+		                                        <input type="date" id="id_desde" name="desde" class="form-control" />
+		                                  </div>
+		                                  <div class="col-md-1"></div>
+		                                  <div class="col-md-3" style="margin: 10px;">
+		                                        <label for="hasta" style="text-align: left;">Hasta:</label>
+		                                        <input type="date" id="id_hasta" name="hasta" class="form-control" />
+		                                  </div>
+									</div>
+									<div class="row" style="text-align: center;">
+										<div  class="col-md-12" style="margin: 10px;" >
+									  		<button type="submit" id="id_btn_filtrar" class="btn btn-primary" style="width: 150px">FILTRA</button>
+									  	</div>	
+									</div>	  
+								</form>
+							</div>
+							<div class="row row-cols-auto">	
+								<div class="col-sm-2">
+				                    <div class="d-grid ">
+				                        <a th:if="${!mostrarTextPrestatario}" th:href="@{/solicitudes/nuevo}" class="btn btn-primary"><i class="fas fa-plus"></i> Nuevo Solicitud</a>
+				                    </div>
+				                </div>
+								<div class="col-sm-2">
+				                    <div class="d-grid " style="display: none;">
+				                        <a th:href="@{/usuarios(format=pdf)}" class="btn btn-danger"><i class="fas fa-file-pdf"></i> Exportar PDF</a>
+				                    </div>
+				                </div>
+				                <div class="col-sm-2">
+				                    <div class="d-grid " style="display: none;">
+				                        <a th:href="@{/usuarios(format=xlsx)}" class="btn btn-success"><i class="fas fa-file-excel"></i> Exportar EXCEL</a>
+				                    </div>
+				                </div>        
+					        </div>
+							<hr>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+											<th>Id Solicitud</th>
+                                            <th>Prestatario</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Fecha Registro</th>
+                                            <th>Monto</th>
+                                            <th>Estado</th>
+                                           <!-- <th th:if="${mostrarSedeNombre}">Sede</th> -->
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="solicitud : ${solicitudes}">
+											<td th:text="${solicitud.Id}"></td>
+                                            <td th:text="${solicitud.usuarioPrestatario.nombres + ' ' + solicitud.usuarioPrestatario.paterno+ ' ' + solicitud.usuarioPrestatario.materno}"></td>
+                                            <td th:text="${solicitud.fechaInicioPrestamo}"></td>
+                                            <td th:text="${solicitud.fechaFinPrestamo}"></td>
+                                            <td th:text="${solicitud.fechaRegistro}"></td>
+                                            <td th:text="${solicitud.monto}"></td>
+                                           	<td th:text="${solicitud.estado == 1 ? 'En proceso' 
+						                    : solicitud.estado == 0 ? 'Rechazado' 
+						                    : solicitud.estado == 2 ? 'Aprobado' 
+						                    : 'Estado Desconocido'}"></td>
+                                           
+                                          <!--     <td th:if="${mostrarSedeNombre}" th:text="${prestamista.sede.nombre}"></td> -->
+                                            <td>
+												<div>
+													<a th:if="${mostrarTextPrestatario and (solicitud.estado == 1)}"
+
+													   th:href="@{/solicitudes/editar/{id}(id=${solicitud.id})}" class="btn btn-primary btn-sm btn-editar"><i class="fas fa-pen"></i>
+													</a>								<!-- Botón "Ver Detalles" -->
+													<a class="btn btn-info btn-sm btn-ver-detalles" data-bs-toggle="modal" data-bs-target="#detallesModal">
+													   <i class="fas fa-eye"></i>
+													</a>
+
+												</div>
+											</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+<div class="modal fade" tabindex="-1" role="dialog" id="Modal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">¡Alerta!</h5>
+      </div>
+      <div class="modal-body">
+        <p>La fecha <b>hasta</b> es superior a la fecha <b>desde</b></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detallesModalLabel">Detalles de la Solicitud de Préstamo</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="modal-id">ID Solicitud:</label>
+            <input type="text" class="form-control" id="modal-id" readonly>
+          </div>
+          <div class="form-group">
+            <label for="modal-prestatario">Prestatario:</label>
+            <input type="text" class="form-control" id="modal-prestatario" readonly>
+          </div>
+          <div class="form-group">
+            <label for="modal-fecha-inicio">Fecha Inicio:</label>
+            <input type="text" class="form-control" id="modal-fecha-inicio" readonly>
+          </div>
+          <div class="form-group">
+            <label for="modal-fecha-fin">Fecha Fin:</label>
+            <input type="text" class="form-control" id="modal-fecha-fin" readonly>
+          </div>
+          <div class="form-group">
+            <label for="modal-fecha-registro">Fecha Registro:</label>
+            <input type="text" class="form-control" id="modal-fecha-registro" readonly>
+          </div>
+          <div class="form-group">
+            <label for="modal-monto">Monto:</label>
+            <input type="text" class="form-control" id="modal-monto" readonly>
+          </div>
+          <div class="form-group">
+            <label for="modal-estado">Estado:</label>
+            <input type="text" class="form-control" id="modal-estado" readonly>
+          </div>
+          <div class="form-group">
+    <label for="modal-tasa">Tasa:</label>
+    <p id="modal-tasa">20% mensual</p>
+</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+	<div th:insert="plantilla_menu/MenuTemplate :: pie"></div>
+	
+	<!-- Inicialización de la DataTable con idioma español -->
+		<script>
+			var table = $('#dataTable').DataTable({
+    			language: {
+        "decimal": "",
+        "emptyTable": "No hay información",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+        "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+        "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Mostrar _MENU_ Entradas",
+        "loadingRecords": "Cargando...",
+        "processing": "Procesando...",
+        "search": "Buscar:",
+        "zeroRecords": "Sin resultados encontrados",
+        "paginate": {
+            "first": "Primero",
+            "last": "Ultimo",
+            "next": "Siguiente",
+            "previous": "Anterior"
+        }
+    },
+});
+
+$("#id_btn_filtrar").click(function(event) {
+   
+
+    var varPrestatario = $("#id_prestatario").val();
+    var varFecDesde = $("#id_desde").val();
+    var varFecHasta = $("#id_hasta").val();
+
+    console.log("Valor de prestatario: " + varPrestatario);
+    console.log("Valor de desde: " + varFecDesde);
+    console.log("Valor de hasta: " + varFecHasta);
+
+    if (valFechaInicioMayFechaFin("#id_desde", "#id_hasta")) {
+        
+        var modal = document.getElementById("Modal");
+        var mod = new bootstrap.Modal(modal);
+        mod.show();
+        // Detener la acción predeterminada del formulario
+    	event.preventDefault();
+        return;
+    }
+});
+
+    // Espera a que el documento esté completamente cargado
+    document.addEventListener("DOMContentLoaded", function () {
+        var detallesButtons = document.querySelectorAll(".btn-ver-detalles");
+
+        detallesButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                var row = this.closest("tr"); // Obtener la fila más cercana al botón
+                var cells = row.querySelectorAll("td"); // Obtener todas las celdas de la fila
+
+                var modal = document.getElementById("detallesModal");
+
+                // Asignar valores de celdas a los campos del modal
+                document.getElementById("modal-id").value = cells[0].textContent;
+                document.getElementById("modal-prestatario").value = cells[1].textContent;
+                document.getElementById("modal-fecha-inicio").value = cells[2].textContent;
+                document.getElementById("modal-fecha-fin").value = cells[3].textContent;
+                document.getElementById("modal-fecha-registro").value = cells[4].textContent;
+                document.getElementById("modal-monto").value = cells[5].textContent;
+                document.getElementById("modal-estado").value = cells[6].textContent;
+
+                var detallesModal = new bootstrap.Modal(modal);
+                detallesModal.show();
+            });
+        });
+    });
+
+// Espera a que el documento esté completamente cargado
+    document.addEventListener("DOMContentLoaded", function () {
+        var prueba = document.querySelectorAll(".prueba");
+
+        prueba.forEach(function (button) {
+            button.addEventListener("click", function () {
+               
+
+                var modal = document.getElementById("Modal");
+
+
+                var mod = new bootstrap.Modal(modal);
+                mod.show();
+            });
+        });
+    });
+
+
+		</script>

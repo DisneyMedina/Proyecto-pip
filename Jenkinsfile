@@ -14,7 +14,7 @@ pipeline {
     }
     options {
           copyArtifactPermission '*' //Here you can specify the job name also
-          buildDiscarder(logRotator(numToKeepStr: '3'))
+        //  buildDiscarder(logRotator(numToKeepStr: '3'))
         }
     stages {
         stage ('Initialize') {

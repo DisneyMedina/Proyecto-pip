@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
        maven 'Maven'
-       jdk "jdk17"
+       jdk "17.0.9"
     }
     environment {
            NEXUS_USERNAME = 'admin'

@@ -15,37 +15,43 @@ pipeline {
         dockerhub_USR = credentials('nexus-docker-registry').username
     }
     options {
-        copyArtifactPermission '*' // Aquí puedes especificar el nombre del trabajo también
+        // copyArtifactPermission '*' // Esta opción no es necesaria
         // buildDiscarder(logRotator(numToKeepStr: '3'))
     }
     stages {
         stage('Initialize') {
             steps {
-                sh '''
+                script {
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                '''
+                }
             }
         }
         stage('Clean') {
             steps {
-                withMaven(maven: 'Maven', mavenSettingsConfig: '2ea57b6f-d6f0-42bc-9770-f24d4170a439') {
-                    sh 'mvn -B -U -DskipTests clean install'
+                script {
+                    withMaven(maven: 'Maven', mavenSettingsConfig: '2ea57b6f-d6f0-42bc-9770-f24d4170a439') {
+                        sh 'mvn -B -U -DskipTests clean install'
+                    }
                 }
             }
         }
         stage('Deploy') {
             steps {
-                withMaven(maven: 'Maven', mavenSettingsConfig: '2ea57b6f-d6f0-42bc-9770-f24d4170a439') {
-                    sh 'mvn -DskipTests deploy'
+                script {
+                    withMaven(maven: 'Maven', mavenSettingsConfig: '2ea57b6f-d6f0-42bc-9770-f24d4170a439') {
+                        sh 'mvn -DskipTests deploy'
+                    }
                 }
             }
         }
         stage('Pushing to Image Registry') {
             steps {
-                sh 'docker tag $imageTag $registryServer/$imageTag'
-                sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin $registryServer'
-                sh 'docker push $registryServer/$imageTag'
+                script {
+                    sh 'docker tag $imageTag $registryServer/$imageTag'
+                    sh "echo '$dockerhub_PSW' | docker login -u '$dockerhub_USR' --password-stdin $registryServer"
+                    sh 'docker push $registryServer/$imageTag'
+                }
             }
         }
     }

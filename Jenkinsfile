@@ -15,10 +15,6 @@ pipeline {
         dockerhub_USR = credentials('nexus-docker-registry').username
 
     }
-    // options {
-        // copyArtifactPermission '*' // Esta opción no es necesaria
-        // buildDiscarder(logRotator(numToKeepStr: '3'))
-    // }
     stages {
         stage('Initialize') {
             steps {
